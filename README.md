@@ -5,6 +5,9 @@ verified follow-up actions in Google Calendar and Trello (Gmail drafts as
 a stretch goal) — built next to, and benchmarked against, a rule-based
 baseline (B0) and a single-call LLM baseline (B1).
 
+For the current checkpoint, verification limits, stakeholder video plan,
+and prioritized Milestone 2 work, start with [HANDOFF.md](HANDOFF.md).
+
 ## Current local verification — November 3, 2026
 
 The Python CLI has been exercised against live Composio-connected accounts.
@@ -18,7 +21,7 @@ are smoke tests on one-person examples, not an accuracy benchmark:
 | Calendar rehearsal | Event created for November 8, 10:00–10:30 America/Phoenix; original run escalated because its response envelope was not parsed. After the parsing fix, a separate read-only check verified ID, title, start/end, and attendee. Description was shown for human review, not independently scored. |
 | Gmail full agent run, `arjun-gmail-live-01` | One draft created and read back; no sending. Its initial body described the task rather than presenting the agenda. |
 | Revised Gmail content, `arjun-gmail-content-preview-01` | Real-model run with mock tools generated a clean subject and all three requested agenda points; the run verified successfully. Revised content has not yet been tested in a new live Gmail write. |
-| Automated suite | 297 tests pass with fake model/service clients; no API keys or paid requests are needed for these tests |
+| Automated suite | 314 tests pass, including the local UI, with fake model/service clients; no API keys or paid requests are needed for these tests |
 
 The adapters pin toolkit releases, handle observed response shapes, and use
 explicit America/Phoenix defaults for this demo. Date-only Calendar events
@@ -92,9 +95,61 @@ do not rewrite a failed run's original report or ledger.
 
 Remaining work before a complete milestone submission includes broader
 reviewed labels and two-dataset comparisons, stakeholder follow-up, and
-the planned Streamlit UI. Live duplicate prevention remains best effort
+live acceptance testing of the new UI. Live duplicate prevention remains best effort
 after ambiguous remote writes, and extraction-index action IDs assume a
 stable candidate ordering. This is not a production reliability claim.
+
+## Local Streamlit workspace
+
+With the virtual environment active and dependencies installed:
+
+```bash
+python run_ui.py
+```
+
+Open [the local workspace](http://127.0.0.1:8501). This launcher binds to
+localhost, disables telemetry and Streamlit secrets-file loading, and skips
+the Streamlit credential prompt. Startup does not load the project's `.env`.
+
+The workspace provides meeting setup, participant editing, source evidence
+beside approve/edit/reject controls, verification results, JSON downloads,
+saved UI run history, and a read-only view of historical evaluation results.
+The original CLI is still available.
+
+Choose a runtime in the sidebar:
+
+| Runtime | Model | Tools | Configuration |
+| --- | --- | --- | --- |
+| Offline walkthrough (default) | Scripted responses for one fixed fictional meeting | In-memory mocks | None; no network or paid calls |
+| OpenAI + mock tools | Configured OpenAI model; billed requests | In-memory mocks | Explicit local `.env` consent |
+| OpenAI + live tools | Configured OpenAI model; billed requests | Composio-connected Calendar, Trello, Gmail | Explicit local `.env` consent plus live-account confirmation |
+
+Start with the offline walkthrough and approve, edit, or reject its three
+actions. It exercises the real downstream pipeline but is not an extraction
+accuracy test. In either OpenAI mode, choose a bundled meeting, upload UTF-8
+text, or paste speaker-labeled turns, then review the roster and meeting date.
+Synthetic roster identities must be replaced before live use.
+
+The app reads `.env` only after the operator checks the consent control and
+starts an API run or clicks **Check connections**. It uses `OPENAI_API_KEY`
+for model requests, `LLM_MODEL` for model selection, `COMPOSIO_API_KEY` for
+tool requests, `COMPOSIO_USER_ID` for connected-account selection, and
+`TRELLO_LIST_ID` for the task destination. It does not change the file or
+process environment. Every action still pauses for individual approval;
+Gmail creates drafts only. Edits pass through validation before execution.
+
+UI artifacts live under `runs/ui/<unique-run-id>/`; configuration keys are
+not included. Refreshing the page does not start another worker or approve
+an action. A disconnected browser cannot automatically resume approvals:
+history is read-only, and an unanswered review stops after 30 minutes.
+Stopping a run prevents subsequent model calls/approvals; an already
+in-flight request may finish. Inspect existing remote objects before
+starting a fresh live run: new UI runs have new IDs and can create duplicates.
+
+UI checks cover the offline worker, approval/edit/reject/cancel behavior,
+history, configuration consent, and Streamlit page rendering. Browser QA
+uses the offline walkthrough; no new live integration writes were made
+while implementing the UI.
 
 The build log below preserves earlier checkpoints; its test counts,
 live-adapter status, and statements about paid API usage are historical.

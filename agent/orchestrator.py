@@ -42,7 +42,7 @@ from pathlib import Path
 from typing import Any, Callable, Optional
 
 from agent import ledger as ledger_module
-from agent.approval_cli import review_item
+from agent.approval_cli import ApprovalDecision, review_item
 from agent.audit import AuditLog
 from agent.extractor import extract
 from agent.ingestion import parse_transcript
@@ -184,7 +184,8 @@ def _execute_once_no_recovery(resolved_item, resolved_action, roster, tools, ide
     calendar_event with due=None, which the validator normally
     prevents -- but A-noval combined with A-norec skips every check)."""
     try:
-        args = build_tool_args(resolved_item, resolved_action, roster)
+        args = build_tool_args(resolved_item, resolved_action, roster,
+                               trello_list_id=getattr(tools.get("trello"), "list_id", None))
         created = call_tool(resolved_item.tool, args, tools, idem_key)
     except Exception as exc:  # noqa: BLE001 -- ablation: no recovery logic at all
         return VerifyOutcome(verified=False, outcome="escalate", error=f"{type(exc).__name__}: {exc}", attempts=1)
@@ -216,6 +217,7 @@ def run_meeting(
     print_fn: Callable[[str], None] = print,
     enable_validator: bool = True,
     enable_recovery: bool = True,
+    review_fn: Optional[Callable[[Any, Any], ApprovalDecision]] = None,
 ) -> RunReport:
     own_ledger = ledger is None
     ledger = ledger or Ledger(":memory:")
@@ -249,7 +251,9 @@ def run_meeting(
             if resolved_item is None:
                 continue  # escalated inside the repair loop
 
-            decision = review_item(resolved_item, resolved_action, auto_approve=auto_approve, input_fn=input_fn, print_fn=print_fn)
+            decision = (review_fn(resolved_item, resolved_action) if review_fn is not None else
+                        review_item(resolved_item, resolved_action, auto_approve=auto_approve,
+                                    input_fn=input_fn, print_fn=print_fn))
             audit_log.log_decision(meeting_id, action_id, "approval", decision.decision, {"auto_approved": decision.auto_approved})
 
             if decision.decision == "rejected":
@@ -258,15 +262,20 @@ def run_meeting(
                 continue
 
             if decision.decision == "edited":
-                resolved_item = _apply_edits(resolved_item, decision.edits)
+                item_edits = {key: value for key, value in decision.edits.items() if key != "description"}
+                resolved_item = _apply_edits(resolved_item, item_edits)
+                edited_description = decision.edits.get("description", resolved_action.description)
                 ledger.set_approval(
                     action_id, "edited", decision.auto_approved, owner=resolved_item.owner, due=resolved_item.due,
                     tool=resolved_item.tool, attendees_or_recipients=resolved_item.attendees_or_recipients,
                 )
                 revalidation = validate(
-                    candidate, _resolved_action_from_item(resolved_item, resolved_action.description), meeting_date, roster, transcript_text,
-                    llm_client=llm_client, run_grounding_check=False,
+                    candidate, _resolved_action_from_item(resolved_item, edited_description), meeting_date, roster, transcript_text,
+                    llm_client=llm_client, run_grounding_check="description" in decision.edits,
                 )
+                if revalidation.grounding_llm_call is not None:
+                    audit_log.log_model_call(meeting_id, action_id, "edited_content_grounding", revalidation.grounding_llm_call)
+                    report.total_cost_usd += revalidation.grounding_llm_call.cost_usd or 0.0
                 ledger.set_validation_result(action_id, revalidation.errors)
                 if not revalidation.passed:
                     ledger.escalate(action_id, f"edited item failed re-validation: {revalidation.errors}")
@@ -283,7 +292,7 @@ def run_meeting(
 
             idem_key = idempotency_key(meeting_id, action_id)
             ledger.set_idempotency_key(action_id, idem_key)
-            resolved_action_for_router = resolved_action if decision.decision != "edited" else _resolved_action_from_item(resolved_item, resolved_action.description)
+            resolved_action_for_router = resolved_action if decision.decision != "edited" else _resolved_action_from_item(resolved_item, edited_description)
             if enable_recovery:
                 outcome = execute_with_recovery(resolved_item, resolved_action_for_router, roster, tools, idem_key)
             else:

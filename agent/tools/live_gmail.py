@@ -83,9 +83,10 @@ def _normalize_draft(raw: dict, fallback_to: list, fallback_subject: str, fallba
 
 
 class LiveGmailDrafts:
-    def __init__(self, store_path: str | Path = _DEFAULT_STORE_PATH, user_id: Optional[str] = None):
+    def __init__(self, store_path: str | Path = _DEFAULT_STORE_PATH, user_id: Optional[str] = None, client=None):
         self._store = IdempotencyStore(store_path)
         self._user_id = user_id or get_user_id()
+        self._client = client
 
     def create_email_draft(self, idempotency_key: str, to: list, subject: str, body: str) -> dict:
         existing_id = self._store.get(idempotency_key)
@@ -95,7 +96,7 @@ class LiveGmailDrafts:
         to = list(to or [])
         primary, extra_recipients = (to[0], to[1:]) if to else (None, [])
 
-        client = get_client()
+        client = self._client if self._client is not None else get_client()
         result = client.tools.execute(
             slug=CREATE_DRAFT_SLUG,
             arguments={"recipient_email": primary, "subject": subject,
@@ -114,7 +115,7 @@ class LiveGmailDrafts:
         return {"id": draft_id, "to": to, "subject": subject, "body": body}
 
     def get_draft(self, draft_id: str) -> dict:
-        client = get_client()
+        client = self._client if self._client is not None else get_client()
         result = client.tools.execute(
             slug=GET_DRAFT_SLUG, arguments={"draft_id": draft_id, "format": "raw", "user_id": "me"},
             user_id=self._user_id, version=GMAIL_TOOLKIT_VERSION,

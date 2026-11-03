@@ -91,18 +91,19 @@ def _normalize_event(raw: dict, fallback_title: str, fallback_description: str,
 
 class LiveCalendar:
     def __init__(self, store_path: str | Path = _DEFAULT_STORE_PATH, user_id: Optional[str] = None,
-                 timezone_name: str = DEFAULT_CALENDAR_TIMEZONE):
+                 timezone_name: str = DEFAULT_CALENDAR_TIMEZONE, client=None):
         self._store = IdempotencyStore(store_path)
         self._user_id = user_id or get_user_id()
         ZoneInfo(timezone_name)
         self._timezone_name = timezone_name
+        self._client = client
 
     def create_calendar_event(self, idempotency_key: str, title: str, start: str, end: str, attendees: list, description: str) -> dict:
         existing_id = self._store.get(idempotency_key)
         if existing_id is not None:
             return self.get_event(existing_id)
 
-        client = get_client()
+        client = self._client if self._client is not None else get_client()
         result = client.tools.execute(
             slug=CREATE_EVENT_SLUG,
             arguments={
@@ -128,7 +129,7 @@ class LiveCalendar:
         return {"id": event_id, "title": title, "start": start, "end": end, "attendees": list(attendees or []), "description": description}
 
     def get_event(self, event_id: str) -> dict:
-        client = get_client()
+        client = self._client if self._client is not None else get_client()
         result = client.tools.execute(
             slug=GET_EVENT_SLUG, arguments={"event_id": event_id, "calendar_id": "primary",
                                            "time_zone": self._timezone_name},

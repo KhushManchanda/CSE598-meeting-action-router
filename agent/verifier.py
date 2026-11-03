@@ -84,7 +84,8 @@ def execute_with_recovery(
             # normally prevents from ever reaching here -- but A-noval
             # skips the validator, and this must escalate, not crash the
             # whole eval run, when that guarantee doesn't hold).
-            args = build_tool_args(resolved_item, resolved_action, roster)
+            args = build_tool_args(resolved_item, resolved_action, roster,
+                                   trello_list_id=getattr(tools.get("trello"), "list_id", None))
             created = call_tool(tool, args, tools, idem_key)
         except InvalidArgumentError as exc:
             return VerifyOutcome(verified=False, outcome="needs_resolver_repair", error=str(exc), attempts=attempt)

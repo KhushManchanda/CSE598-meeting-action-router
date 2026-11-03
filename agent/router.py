@@ -49,7 +49,7 @@ def _owner_field(owner_name: Optional[str], roster: Roster, field: str) -> Optio
     return match[field] if match else None
 
 
-def build_tool_args(resolved_item, resolved_action, roster: Roster) -> dict:
+def build_tool_args(resolved_item, resolved_action, roster: Roster, trello_list_id: Optional[str] = None) -> dict:
     """resolved_item: the validator-produced ActionItem (owner/tool/due/
     attendees already roster-checked). resolved_action: the resolver's
     ResolvedAction (only used here for its longer `description`).
@@ -74,7 +74,7 @@ def build_tool_args(resolved_item, resolved_action, roster: Roster) -> dict:
             "title": resolved_item.task,
             "assignee_member_id": _owner_field(resolved_item.owner, roster, "trello_member_id"),
             "due": resolved_item.due,
-            "list_id": DEFAULT_TRELLO_LIST_ID,
+            "list_id": trello_list_id or DEFAULT_TRELLO_LIST_ID,
             "description": resolved_action.description,
         }
     if tool == "email_draft":

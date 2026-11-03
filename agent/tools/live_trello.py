@@ -73,11 +73,13 @@ def _normalize_card(raw: dict, fallback_assignee: Optional[str], fallback_list_i
 
 class LiveTrello:
     def __init__(self, store_path: str | Path = _DEFAULT_STORE_PATH, user_id: Optional[str] = None,
-                 timezone_name: str = DEFAULT_TRELLO_TIMEZONE):
+                 timezone_name: str = DEFAULT_TRELLO_TIMEZONE, client=None, list_id: Optional[str] = None):
         self._store = IdempotencyStore(store_path)
         self._user_id = user_id or get_user_id()
         ZoneInfo(timezone_name)  # fail before any write for an unknown timezone
         self._timezone_name = timezone_name
+        self._client = client
+        self.list_id = list_id
 
     def create_task(
         self, idempotency_key: str, title: str, assignee_member_id: Optional[str], due: Optional[str],
@@ -87,7 +89,7 @@ class LiveTrello:
         if existing_id is not None:
             return self.get_card(existing_id)
 
-        client = get_client()
+        client = self._client if self._client is not None else get_client()
         result = client.tools.execute(
             slug=CREATE_CARD_SLUG,
             arguments={
@@ -110,7 +112,7 @@ class LiveTrello:
         return {"id": card_id, "title": title, "assignee_member_id": assignee_member_id, "due": due, "list_id": list_id, "description": description}
 
     def get_card(self, card_id: str) -> dict:
-        client = get_client()
+        client = self._client if self._client is not None else get_client()
         result = client.tools.execute(
             slug=GET_CARD_SLUG, arguments={"idCard": card_id, "fields": TRELLO_CARD_FIELDS},
             user_id=self._user_id, version=TRELLO_TOOLKIT_VERSION,
