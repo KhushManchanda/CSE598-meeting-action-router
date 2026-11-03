@@ -171,3 +171,37 @@ def test_repair_feedback_is_included_in_the_prompt():
     first_call_messages = fake.calls[0]
     user_message = next(m for m in first_call_messages if m["role"] == "user")
     assert "owner could not be determined" in user_message["content"]
+
+
+def test_email_resolution_receives_agenda_outside_short_candidate_quote():
+    from pathlib import Path
+    from agent.router import build_tool_args
+    from agent.schema import ActionItem
+
+    root = Path(__file__).resolve().parents[1]
+    transcript = (root / "data/demo/arjun_google/gmail.txt").read_text()
+    roster = Roster.from_file(root / "data/demo/arjun_google/roster.json")
+    utterances = parse_transcript(transcript)
+    quote = utterances[0].text.split(". The agenda")[0] + "."
+    candidate = _candidate(task="Draft an email about the rehearsal agenda", raw_owner_mention="Arjun Ranjan",
+                           evidence_quote=quote, evidence_utterance_ids=["u1"])
+    assert "inspect verified tool outputs" not in quote
+    body = "Here is the rehearsal agenda:\n- Review the transcript.\n- Demonstrate the approval step.\n- Inspect verified tool outputs."
+
+    class ContextCheckingClient:
+        def complete(self, messages, **kwargs):
+            content = messages[1]["content"]
+            assert "inspect verified tool outputs" in content
+            assert "demonstrate the approval step" in content
+            assert "untrusted source data" in content
+            assert "actual recipient-facing email body" in messages[0]["content"]
+            return _finalize_result(owner="Arjun Ranjan", tool="email_draft", due=None,
+                task_text="Capstone demo rehearsal agenda", description=body,
+                attendees_or_recipients=["arjunranjanwork@gmail.com"])
+
+    resolved = resolve(candidate, "2026-11-03", roster, utterances, llm_client=ContextCheckingClient())
+    item = ActionItem(id="email-1", transcript_id="email", task=resolved.task_text,
+                      owner=resolved.owner, tool=resolved.tool, attendees_or_recipients=resolved.attendees_or_recipients)
+    args = build_tool_args(item, resolved, roster)
+    assert args["subject"] == "Capstone demo rehearsal agenda"
+    assert args["body"] == body

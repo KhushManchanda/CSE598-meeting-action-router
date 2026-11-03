@@ -5,6 +5,100 @@ verified follow-up actions in Google Calendar and Trello (Gmail drafts as
 a stretch goal) — built next to, and benchmarked against, a rule-based
 baseline (B0) and a single-call LLM baseline (B1).
 
+## Current local verification — November 3, 2026
+
+The Python CLI has been exercised against live Composio-connected accounts.
+The following results were produced by manual, human-approved runs; they
+are smoke tests on one-person examples, not an accuracy benchmark:
+
+| Check | Observed result |
+| --- | --- |
+| Trello full agent run, `arjun-trello-full-01` | One task created and verified; no escalations |
+| Same Trello meeting ID and ledger, rerun | One completed action skipped, zero execution calls; not a general crash/retry guarantee |
+| Calendar rehearsal | Event created for November 8, 10:00–10:30 America/Phoenix; original run escalated because its response envelope was not parsed. After the parsing fix, a separate read-only check verified ID, title, start/end, and attendee. Description was shown for human review, not independently scored. |
+| Gmail full agent run, `arjun-gmail-live-01` | One draft created and read back; no sending. Its initial body described the task rather than presenting the agenda. |
+| Revised Gmail content, `arjun-gmail-content-preview-01` | Real-model run with mock tools generated a clean subject and all three requested agenda points; the run verified successfully. Revised content has not yet been tested in a new live Gmail write. |
+| Automated suite | 297 tests pass with fake model/service clients; no API keys or paid requests are needed for these tests |
+
+The adapters pin toolkit releases, handle observed response shapes, and use
+explicit America/Phoenix defaults for this demo. Date-only Calendar events
+use the existing 10:00/30-minute slot; date-only Trello deadlines use 17:00.
+The adapter constructors accept a different timezone. Calendar uses the
+primary calendar, disables Meet-link creation, and requests no update
+notifications. Gmail preserves additional To recipients, disables automatic
+signatures, and decodes MIME for read-back.
+
+Resolver/grounding v2 include nearby source context when composing and
+checking email content. The approval CLI displays the actual subject and
+body before asking for approval. Historical v1 prompt files remain available;
+new evaluation runs record hashes for the active versions.
+
+### Local commands and fixtures
+
+Use Python 3.11+ and install `requirements.txt` in a virtual environment.
+Create `runs/` before the main CLI's first run; the default ledger currently
+requires its parent directory to exist. The CLI loads local `.env` itself.
+Local configuration must be supplied by the account owner; do not commit
+keys, `.env` files, OAuth state, or runtime outputs.
+
+```bash
+python3.11 -m venv .venv
+source .venv/bin/activate
+python -m pip install -r requirements.txt
+mkdir -p runs
+pytest -q
+```
+
+`scripts/check_local_setup.py --network` checks authentication, connections,
+and tool schemas without model generation or integration writes. Run it
+through Python and only with permission to access local configuration.
+`scripts/inspect_google_tools.py` prints the pinned Google input schemas.
+Auth configs and active account connections are distinct; live accounts must
+be connected under the same `COMPOSIO_USER_ID` used by execution.
+`scripts/composio_connect.py` currently needs `.env` loaded by a wrapper:
+
+```bash
+python -c 'from dotenv import load_dotenv; load_dotenv(".env"); from scripts.composio_connect import main; main()' --toolkit TRELLO
+```
+
+Repeat with GOOGLECALENDAR or GMAIL as needed and complete the browser
+consent flow yourself. Never paste a key into a terminal command argument.
+
+The bundled evaluation rosters contain fictional identities for mock tools.
+Manual live-demo examples are in `data/demo/arjun_trello/` and
+`data/demo/arjun_google/`, with real account identifiers provided by the
+demo operator. Replace these with your own identities before another
+person uses the fixtures against live accounts. Do not use fictional roster
+member IDs for real Trello assignments.
+
+To preview the revised Gmail content with real model calls but no Gmail write:
+
+```bash
+python run_agent.py --input data/demo/arjun_google/gmail.txt \
+  --roster data/demo/arjun_google/roster.json --meeting-date 2026-11-03 \
+  --meeting-id my-new-gmail-preview --tools mock
+```
+
+Mock mode still uses paid OpenAI requests. Live mode requires both
+`--tools live --confirm-live`; omit `--auto-approve` for manual demos and
+inspect each action before approval. Keep the same meeting ID and ledger
+when checking a completed run's skip behavior. Once a remote object exists,
+do not create a fresh meeting ID just to troubleshoot verification.
+`scripts/verify_trello_demo.py` and `scripts/verify_calendar_demo.py` inspect
+existing demo objects without creating replacements. The Trello helper's
+explicit `--correct-due` flag updates only the existing card's deadline,
+after checking the other expected fields. Separate verification outputs
+do not rewrite a failed run's original report or ledger.
+
+Remaining work before a complete milestone submission includes broader
+reviewed labels and two-dataset comparisons, stakeholder follow-up, and
+the planned Streamlit UI. Live duplicate prevention remains best effort
+after ambiguous remote writes, and extraction-index action IDs assume a
+stable candidate ordering. This is not a production reliability claim.
+
+The build log below preserves earlier checkpoints; its test counts,
+live-adapter status, and statements about paid API usage are historical.
+
 Full design doc: see the capstone prompt (not checked in here). This
 README tracks **what's actually built**, not the target design — anything
 not listed under "Done" is a TODO, not a claim.

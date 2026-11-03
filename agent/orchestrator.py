@@ -93,14 +93,12 @@ def write_report(report: RunReport, path: str | Path) -> None:
     path.write_text(json.dumps(report.to_json(), indent=2, default=str), encoding="utf-8")
 
 
-def _resolved_action_from_item(item) -> ResolvedAction:
+def _resolved_action_from_item(item, description: str = "") -> ResolvedAction:
     """router/verifier need a ResolvedAction (for .description); after an
-    edit, we only have the edited ActionItem -- description is lost on
-    edit, which is an accepted, disclosed limitation of the approval
-    CLI's edit flow (it edits owner/due/tool/task/recipients, not the
-    longer description text)."""
+    edit, the ActionItem does not carry description. Preserve the
+    reviewed description when editing another field."""
     return ResolvedAction(
-        owner=item.owner, tool=item.tool, task_text=item.task, description="",
+        owner=item.owner, tool=item.tool, task_text=item.task, description=description,
         due=item.due, attendees_or_recipients=item.attendees_or_recipients,
         confidence_notes="", unresolved=False,
     )
@@ -266,7 +264,7 @@ def run_meeting(
                     tool=resolved_item.tool, attendees_or_recipients=resolved_item.attendees_or_recipients,
                 )
                 revalidation = validate(
-                    candidate, _resolved_action_from_item(resolved_item), meeting_date, roster, transcript_text,
+                    candidate, _resolved_action_from_item(resolved_item, resolved_action.description), meeting_date, roster, transcript_text,
                     llm_client=llm_client, run_grounding_check=False,
                 )
                 ledger.set_validation_result(action_id, revalidation.errors)
@@ -285,7 +283,7 @@ def run_meeting(
 
             idem_key = idempotency_key(meeting_id, action_id)
             ledger.set_idempotency_key(action_id, idem_key)
-            resolved_action_for_router = resolved_action if decision.decision != "edited" else _resolved_action_from_item(resolved_item)
+            resolved_action_for_router = resolved_action if decision.decision != "edited" else _resolved_action_from_item(resolved_item, resolved_action.description)
             if enable_recovery:
                 outcome = execute_with_recovery(resolved_item, resolved_action_for_router, roster, tools, idem_key)
             else:
@@ -304,7 +302,9 @@ def run_meeting(
             else:
                 reason = outcome.error or "verification failed"
                 ledger.escalate(action_id, reason)
-                report.escalated.append({"id": action_id, "reason": reason})
+                report.escalated.append({"id": action_id, "reason": reason,
+                                         "mismatches": outcome.mismatches,
+                                         "created_object": outcome.created_object})
 
         return report
     finally:

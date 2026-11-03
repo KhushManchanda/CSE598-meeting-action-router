@@ -136,3 +136,24 @@ def test_calendar_event_with_no_due_date_escalates_instead_of_crashing():
     assert outcome.outcome == "escalate"
     assert "due_date" in outcome.error or "NoneType" in outcome.error or "None" in outcome.error
     assert len(tools["calendar"].all_objects()) == 0
+
+
+def test_readback_exception_preserves_created_object_without_retrying_creation():
+    class UnreadableTrello:
+        creates = 0
+
+        def create_task(self, idem_key, **kwargs):
+            self.creates += 1
+            return {"id": "existing_card", **kwargs}
+
+        def get_card(self, card_id):
+            raise RuntimeError("Cannot read saved card")
+
+    trello = UnreadableTrello()
+    outcome = execute_with_recovery(_item(), _resolved_action(), ROSTER,
+                                    {"trello": trello}, "readback-error")
+    assert not outcome.verified
+    assert outcome.outcome == "escalate"
+    assert outcome.created_object["id"] == "existing_card"
+    assert "read-back failed" in outcome.error
+    assert trello.creates == 1

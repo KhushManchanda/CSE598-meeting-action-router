@@ -1,0 +1,2 @@
+Capstone Gmail draft integration test
+Arjun Ranjan: Arjun Ranjan will draft an email to Arjun Ranjan about the capstone demo rehearsal agenda. The agenda is to review the transcript, demonstrate the approval step, and inspect verified tool outputs.

@@ -91,3 +91,19 @@ def test_render_includes_key_fields():
     assert "Marcus" in rendered
     assert "trello_task" in rendered
     assert "high confidence" in rendered
+
+
+def test_email_subject_and_body_are_visible_before_approval():
+    printed = []
+    body = "Agenda:\n- Review the transcript.\n- Demonstrate approval."
+
+    def approve_after_inspecting(prompt):
+        rendered = "\n".join(printed)
+        assert "Email subject: Rehearsal agenda" in rendered
+        assert body in rendered
+        return "a"
+
+    decision = review_item(_item(task="Rehearsal agenda", tool="email_draft"),
+                          _resolved_action(tool="email_draft", description=body),
+                          input_fn=approve_after_inspecting, print_fn=printed.append)
+    assert decision.decision == "approved"

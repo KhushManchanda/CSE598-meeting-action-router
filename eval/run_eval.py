@@ -43,6 +43,8 @@ from agent.ledger import VERIFIED, Ledger  # noqa: E402
 from agent.orchestrator import DEFAULT_BUDGET, run_meeting  # noqa: E402
 from agent.participants import Roster  # noqa: E402
 from agent.prompts import prompt_hash  # noqa: E402
+from agent.resolver import PROMPT_NAME as RESOLVER_PROMPT_NAME  # noqa: E402
+from agent.validator import GROUNDING_PROMPT_NAME  # noqa: E402
 from agent.schema import ActionItem  # noqa: E402
 from agent.tools.mock_backend import MockCalendar, MockGmailDrafts, MockTrello  # noqa: E402
 from baselines.b0_adapter import run_b0_on_transcript  # noqa: E402
@@ -168,8 +170,8 @@ def run_eval(
         "repeat_subset": sorted(repeat_subset),
         "prompt_hashes": {
             "extractor_v1": prompt_hash("extractor_v1"),
-            "resolver_v1": prompt_hash("resolver_v1"),
-            "validator_grounding_v1": prompt_hash("validator_grounding_v1"),
+            RESOLVER_PROMPT_NAME: prompt_hash(RESOLVER_PROMPT_NAME),
+            GROUNDING_PROMPT_NAME: prompt_hash(GROUNDING_PROMPT_NAME),
             "b1_single_call_v1": prompt_hash("b1_single_call_v1"),
         },
     }

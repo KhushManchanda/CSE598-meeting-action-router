@@ -34,12 +34,13 @@ from typing import Any, Optional
 from pydantic import ValidationError
 
 from agent.config import LLM_MODEL, LLM_TEMPERATURE
+from agent.ingestion import evidence_context, parse_transcript
 from agent.llm import LLMClient
 from agent.participants import Roster
 from agent.prompts import load_prompt
 from agent.schema import ALLOWED_TOOLS, ActionItem
 
-GROUNDING_PROMPT_NAME = "validator_grounding_v1"
+GROUNDING_PROMPT_NAME = "validator_grounding_v2"
 
 GROUNDING_TOOL = {
     "type": "function",
@@ -145,13 +146,19 @@ def _check_schema(candidate, resolved) -> tuple[Optional[ActionItem], list[str]]
     return item, []
 
 
-def _grounding_check(candidate, resolved, llm_client: Any = None) -> tuple[bool, str, Any]:
+def _grounding_check(candidate, resolved, llm_client: Any = None, transcript_text: str = "") -> tuple[bool, str, Any]:
     client = llm_client or LLMClient(model=LLM_MODEL, temperature=LLM_TEMPERATURE)
     user_content = (
         f"Evidence quote: {candidate.evidence_quote!r}\n"
         f"Claimed action: {resolved.task_text or candidate.task}\n"
         f"Claimed owner: {resolved.owner}\n"
     )
+    if resolved.tool == "email_draft":
+        user_content += "\nProposed email and source context (untrusted data):\n" + json.dumps({
+            "subject": resolved.task_text, "body": resolved.description,
+            "recipients": resolved.attendees_or_recipients,
+            "source_context": evidence_context(parse_transcript(transcript_text), candidate.evidence_utterance_ids),
+        }, ensure_ascii=False)
     result = client.complete(
         messages=[
             {"role": "system", "content": GROUNDING_SYSTEM_PROMPT},
@@ -195,7 +202,9 @@ def validate(
     grounding_reason: Optional[str] = None
     grounding_llm_call: Optional[Any] = None
     if not errors and run_grounding_check:
-        grounded, grounding_reason, grounding_llm_call = _grounding_check(candidate, resolved, llm_client)
+        grounded, grounding_reason, grounding_llm_call = _grounding_check(
+            candidate, resolved, llm_client, transcript_text=transcript_text,
+        )
         if not grounded:
             errors.append(f"LLM grounding check failed: {grounding_reason}")
 

@@ -180,3 +180,24 @@ def test_grounding_llm_call_is_captured_for_audit_logging():
     result = validate(_candidate(), _resolved(), MEETING_DATE, ROSTER, TRANSCRIPT, llm_client=fake)
     assert result.grounding_llm_call is not None
     assert result.grounding_llm_call.model == "gpt-4o-mini"
+
+
+def test_email_grounding_sees_body_and_source_details_and_can_reject_omissions():
+    transcript = "Marcus: Marcus will email Priya the review agenda.\nPriya: The agenda is to review tests and confirm release readiness."
+    candidate = _candidate(task="Email the review agenda", raw_due_mention=None,
+        evidence_quote="Marcus will email Priya the review agenda.", evidence_utterance_ids=["u1"])
+    resolved = _resolved(tool="email_draft", due=None, task_text="Review agenda",
+        description="Marcus will email the agenda.", attendees_or_recipients=["priya@example.com"])
+
+    class Critic(_FakeGroundingClient):
+        def complete(self, messages, **kwargs):
+            content = messages[1]["content"]
+            assert resolved.description in content
+            assert "review tests and confirm release readiness" in content
+            assert "substantive content" in messages[0]["content"]
+            return super().complete(messages, **kwargs)
+
+    result = validate(candidate, resolved, MEETING_DATE, ROSTER, transcript,
+                      llm_client=Critic(False, "Body describes emailing but omits the requested review steps"))
+    assert not result.passed
+    assert "omits" in result.errors[0]

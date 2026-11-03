@@ -114,6 +114,12 @@ def test_run_eval_end_to_end_scores_against_real_gold(tmp_path):
 
     # config + predictions actually written to disk
     assert (tmp_path / "run1" / "config.json").exists()
+    config = json.loads((tmp_path / "run1" / "config.json").read_text())
+    from agent.resolver import PROMPT_NAME
+    from agent.validator import GROUNDING_PROMPT_NAME
+    from agent.prompts import prompt_hash
+    assert config["prompt_hashes"][PROMPT_NAME] == prompt_hash(PROMPT_NAME)
+    assert config["prompt_hashes"][GROUNDING_PROMPT_NAME] == prompt_hash(GROUNDING_PROMPT_NAME)
     pred_path = tmp_path / "run1" / "predictions" / "a" / "test1.json"
     assert pred_path.exists()
 

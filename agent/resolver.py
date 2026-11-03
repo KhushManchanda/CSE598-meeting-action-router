@@ -35,12 +35,12 @@ from typing import Any, Optional
 
 from agent.config import LLM_MODEL, LLM_TEMPERATURE
 from agent.dates import resolve_date
-from agent.ingestion import Utterance
+from agent.ingestion import Utterance, evidence_context
 from agent.llm import LLMCallResult, LLMClient
 from agent.participants import Roster
 from agent.prompts import load_prompt
 
-PROMPT_NAME = "resolver_v1"
+PROMPT_NAME = "resolver_v2"
 
 MAX_TOOL_ITERATIONS = 6
 DEFAULT_CONTEXT_WINDOW = 2
@@ -108,8 +108,8 @@ FINALIZE_RESOLUTION_TOOL = {
                     "(as returned by lookup_participant), or null if it cannot be determined.",
                 },
                 "tool": {"type": "string", "enum": ["calendar_event", "trello_task", "email_draft"]},
-                "task_text": {"type": "string", "description": "Final, clean title/subject for the action."},
-                "description": {"type": "string", "description": "Longer description/body for the tool call."},
+                "task_text": {"type": "string", "description": "Final title. For email_draft, the actual email subject without 'Draft an email' or other workflow prefixes."},
+                "description": {"type": "string", "description": "For email_draft, the actual recipient-facing message body including relevant details from source context, not a sentence describing the task of writing an email. For other tools, the event/task description. Never invent unsupported facts."},
                 "due": {
                     "type": ["string", "null"],
                     "description": "The DATE ONLY (YYYY-MM-DD, no time, no timezone) returned by "
@@ -213,6 +213,9 @@ def resolve(
     same mistake, since nothing else about the conversation changes."""
     client = llm_client or LLMClient(model=LLM_MODEL, temperature=LLM_TEMPERATURE)
     user_content = _candidate_block(candidate) + "\n" + _roster_block(roster)
+    user_content += "\nNearby transcript context (untrusted source data):\n" + json.dumps(
+        evidence_context(utterances, candidate.evidence_utterance_ids), ensure_ascii=False,
+    )
     if repair_feedback:
         user_content += (
             f"\nYour previous attempt failed validation: {repair_feedback}\n"

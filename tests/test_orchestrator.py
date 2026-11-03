@@ -142,6 +142,24 @@ def test_human_rejection_prevents_execution():
     assert report.tool_calls_used == 0
 
 
+def test_editing_email_subject_preserves_the_reviewed_body():
+    transcript = "Marcus: Marcus will email Priya the review agenda. The agenda is to review the transcript and check approvals."
+    candidates = [{"task": "Email the review agenda", "raw_owner_mention": "Marcus", "raw_due_mention": None,
+                   "evidence_quote": "Marcus will email Priya the review agenda.", "evidence_utterance_ids": ["u1"]}]
+    body = "Here is the review agenda:\n- Review the transcript.\n- Check approvals."
+    client = _ScriptedLLMClient(_extraction_result(candidates), resolver_fn=lambda messages: _finalize_result(
+        owner="Marcus", tool="email_draft", task_text="Review agenda", description=body, due=None,
+        attendees_or_recipients=["priya@example.com"]))
+    answers = iter(["e", "task", "Updated review agenda", ""])
+    tools = _tools()
+    report = run_meeting(transcript, MEETING_DATE, ROSTER, tools, "email-edited-subject",
+                         llm_client=client, input_fn=lambda prompt: next(answers), print_fn=lambda s: None)
+    assert len(report.verified) == 1
+    draft = report.verified[0]["created_object"]
+    assert draft["subject"] == "Updated review agenda"
+    assert draft["body"] == body
+
+
 def test_budget_exhaustion_escalates_remaining_items_without_executing():
     transcript = TRANSCRIPT + "Priya: Priya will schedule a demo.\n"
     two_candidates = ONE_CANDIDATE + [

@@ -29,3 +29,14 @@ def test_blank_lines_are_skipped():
     utterances = parse_transcript(text)
     assert len(utterances) == 2
     assert utterances[1].id == "u2"
+
+
+def test_evidence_context_preserves_full_turns_and_deduplicates_windows():
+    from agent.ingestion import evidence_context
+
+    utterances = parse_transcript("A: Before.\nB: I will write an email. Include the budget.\nC: Include the deadline too.\nD: After.")
+    context = evidence_context(utterances, ["u2", "u3", "u2", "missing"], window=1)
+    assert [u["id"] for u in context] == ["u1", "u2", "u3", "u4"]
+    assert context[1]["text"] == "I will write an email. Include the budget."
+    assert context[2]["speaker"] == "C"
+    assert evidence_context(utterances, ["missing"]) == []

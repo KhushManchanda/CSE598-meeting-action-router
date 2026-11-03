@@ -38,6 +38,10 @@ def _render_item(resolved_item, resolved_action, print_fn: Callable[[str], None]
     print_fn(f"  Due: {resolved_item.due}")
     print_fn(f"  Attendees/recipients: {resolved_item.attendees_or_recipients}")
     print_fn(f"  Evidence utterances: {resolved_item.evidence_utterance_ids}")
+    if resolved_item.tool == "email_draft" and resolved_action is not None:
+        print_fn(f"  Email subject: {resolved_item.task}")
+        print_fn("  Email body:")
+        print_fn(resolved_action.description)
     if resolved_action is not None and getattr(resolved_action, "confidence_notes", None):
         print_fn(f"  Resolver notes: {resolved_action.confidence_notes}")
 

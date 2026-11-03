@@ -100,7 +100,15 @@ def execute_with_recovery(
                 verified=False, outcome="escalate", error=f"{type(exc).__name__}: {exc}", attempts=attempt
             )
         else:
-            read_back = _get_record(tool, tools, created["id"])
+            try:
+                read_back = _get_record(tool, tools, created["id"])
+            except Exception as exc:
+                # A write may already exist. Preserve its identity and escalate;
+                # never crash or retry creation just because reading failed.
+                return VerifyOutcome(
+                    verified=False, outcome="escalate", created_object=created,
+                    error=f"read-back failed ({type(exc).__name__}): {exc}", attempts=attempt,
+                )
             mismatches = _compare(args, read_back)
             if mismatches:
                 return VerifyOutcome(

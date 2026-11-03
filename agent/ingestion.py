@@ -52,3 +52,20 @@ def parse_transcript(transcript_text: str) -> list[Utterance]:
             Utterance(id=f"u{counter}", speaker=speaker, text=text, raw=line, line_no=line_no)
         )
     return utterances
+
+
+def evidence_context(utterances: list[Utterance], evidence_ids: list[str], window: int = 2) -> list[dict]:
+    """Original source turns near evidence, deduplicated in document order.
+
+    Keep full turns: a short extraction quote can omit content later in
+    the same utterance. Unknown IDs never imply a guessed source span.
+    """
+    by_id = {u.id: index for index, u in enumerate(utterances)}
+    indexes = set()
+    for evidence_id in evidence_ids:
+        center = by_id.get(evidence_id)
+        if center is not None:
+            indexes.update(range(max(0, center - max(0, window)),
+                                 min(len(utterances), center + max(0, window) + 1)))
+    return [{"id": utterances[i].id, "speaker": utterances[i].speaker, "text": utterances[i].text}
+            for i in sorted(indexes)]

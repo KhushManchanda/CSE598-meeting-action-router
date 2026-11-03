@@ -28,3 +28,13 @@ def test_different_prompts_have_different_hashes():
 def test_all_four_production_prompts_load():
     for name in ["extractor_v1", "resolver_v1", "validator_grounding_v1", "b1_single_call_v1"]:
         assert len(load_prompt(name)) > 0
+
+
+def test_active_email_drafting_prompts_load_separately_from_historical_versions():
+    from agent.resolver import PROMPT_NAME
+    from agent.validator import GROUNDING_PROMPT_NAME
+
+    assert PROMPT_NAME == "resolver_v2"
+    assert GROUNDING_PROMPT_NAME == "validator_grounding_v2"
+    assert prompt_hash(PROMPT_NAME) != prompt_hash("resolver_v1")
+    assert prompt_hash(GROUNDING_PROMPT_NAME) != prompt_hash("validator_grounding_v1")
