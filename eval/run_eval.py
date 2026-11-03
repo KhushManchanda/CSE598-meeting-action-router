@@ -31,17 +31,24 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Optional
 
-from agent.config import LLM_MODEL, LLM_TEMPERATURE
-from agent.ledger import VERIFIED, Ledger
-from agent.orchestrator import DEFAULT_BUDGET, run_meeting
-from agent.participants import Roster
-from agent.prompts import prompt_hash
-from agent.schema import ActionItem
-from agent.tools.mock_backend import MockCalendar, MockGmailDrafts, MockTrello
-from baselines.b0_adapter import run_b0_on_transcript
-from baselines.b1_single_call import run_b1
-from eval.dataset import TranscriptBundle, load_bundle, load_gold, load_split
-from eval.score import score as score_predictions
+from dotenv import load_dotenv
+
+# Same reasoning as run_agent.py: agent/config.py and
+# agent/tool_schemas.py read os.environ at import time, so .env must
+# be loaded before those modules are imported, not lazily inside main().
+load_dotenv()
+
+from agent.config import LLM_MODEL, LLM_TEMPERATURE  # noqa: E402
+from agent.ledger import VERIFIED, Ledger  # noqa: E402
+from agent.orchestrator import DEFAULT_BUDGET, run_meeting  # noqa: E402
+from agent.participants import Roster  # noqa: E402
+from agent.prompts import prompt_hash  # noqa: E402
+from agent.schema import ActionItem  # noqa: E402
+from agent.tools.mock_backend import MockCalendar, MockGmailDrafts, MockTrello  # noqa: E402
+from baselines.b0_adapter import run_b0_on_transcript  # noqa: E402
+from baselines.b1_single_call import run_b1  # noqa: E402
+from eval.dataset import TranscriptBundle, load_bundle, load_gold, load_split  # noqa: E402
+from eval.score import score as score_predictions  # noqa: E402
 
 ALL_SYSTEMS = ["b0", "b1", "a", "a_noval", "a_norec"]
 REPO_ROOT = Path(__file__).resolve().parent.parent

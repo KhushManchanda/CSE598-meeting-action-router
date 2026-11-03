@@ -28,3 +28,18 @@ def test_completely_unknown_model_returns_none_not_zero():
 def test_output_tokens_priced_separately_from_input():
     cost = estimate_cost_usd("gpt-4o-mini", input_tokens=0, output_tokens=1_000_000)
     assert cost == 0.60
+
+
+def test_llm_model_falls_back_when_env_var_is_empty_string_not_just_unset(monkeypatch):
+    # Regression: python-dotenv loads "LLM_MODEL=" (blank) as "" into
+    # os.environ, which os.environ.get(key, default) does NOT treat as
+    # missing -- found once load_dotenv() was actually wired up.
+    import importlib
+
+    import agent.config as config_module
+
+    monkeypatch.setenv("LLM_MODEL", "")
+    importlib.reload(config_module)
+    assert config_module.LLM_MODEL == "gpt-4o-mini"
+    monkeypatch.delenv("LLM_MODEL", raising=False)
+    importlib.reload(config_module)

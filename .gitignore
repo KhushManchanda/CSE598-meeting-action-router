@@ -6,6 +6,7 @@ venv/
 
 # Secrets
 .env
+.secrets/
 
 # Runtime artifacts
 runs/

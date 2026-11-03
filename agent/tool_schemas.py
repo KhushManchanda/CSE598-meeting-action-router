@@ -26,7 +26,17 @@ Calendar/Trello/Gmail call — they are not part of any real API request.
 
 from __future__ import annotations
 
-DEFAULT_TRELLO_LIST_ID = "list_todo"
+import os
+
+# "list_todo" is a mock-backend-only placeholder (MockTrello doesn't
+# care what the string is). A live Trello board needs a REAL list id
+# (step 7) -- set TRELLO_LIST_ID in .env once you have a test board.
+# `or` (not dict.get's default param) deliberately treats an empty
+# string the same as unset: .env.example ships TRELLO_LIST_ID= blank,
+# and os.environ.get("TRELLO_LIST_ID", "list_todo") would otherwise
+# return "" once python-dotenv actually loads it (found by fixing the
+# separate bug of load_dotenv() never being called at all).
+DEFAULT_TRELLO_LIST_ID = os.environ.get("TRELLO_LIST_ID") or "list_todo"
 
 _BOOKKEEPING_PROPERTIES = {
     "owner": {

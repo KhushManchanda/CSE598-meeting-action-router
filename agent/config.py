@@ -21,7 +21,7 @@ import os
 from typing import Optional
 
 LLM_PROVIDER = "openai"
-LLM_MODEL = os.environ.get("LLM_MODEL", "gpt-4o-mini")
+LLM_MODEL = os.environ.get("LLM_MODEL") or "gpt-4o-mini"  # `or`, not .get's default: treat "" same as unset
 LLM_TEMPERATURE = 0.0
 
 # USD per 1,000,000 tokens, standard (non-batch) pricing.

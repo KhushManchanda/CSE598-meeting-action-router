@@ -12,3 +12,8 @@ pytest>=8.0
 # user's request (no Anthropic key available) — agent/llm.py is a thin,
 # provider-swappable wrapper for exactly this kind of change.
 openai>=1.50
+
+# Step 7: live Google Calendar/Gmail/Trello, via Composio's managed
+# connection layer (replaces a from-scratch Google OAuth + raw Trello
+# REST implementation, at the user's request mid-project).
+composio>=0.30
