@@ -1,0 +1,62 @@
+[
+  {
+    "id": "test1-gold-1",
+    "transcript_id": "test1",
+    "task": "Schedule a demo with the design team",
+    "owner": "Marcus",
+    "tool": "calendar_event",
+    "due": null,
+    "attendees_or_recipients": [],
+    "evidence_utterance_ids": ["u3"]
+  },
+  {
+    "id": "test1-gold-2",
+    "transcript_id": "test1",
+    "task": "Email the data platform team about the pipeline bug",
+    "owner": "Jordan",
+    "tool": "email_draft",
+    "due": null,
+    "attendees_or_recipients": [],
+    "evidence_utterance_ids": ["u5"]
+  },
+  {
+    "id": "test1-gold-3",
+    "transcript_id": "test1",
+    "task": "Email the legal team about the vendor contract",
+    "owner": "Priya",
+    "tool": "email_draft",
+    "due": null,
+    "attendees_or_recipients": [],
+    "evidence_utterance_ids": ["u6", "u7"]
+  },
+  {
+    "id": "test1-gold-4",
+    "transcript_id": "test1",
+    "task": "Create a task to re-run the dashboard tests once the pipeline is fixed",
+    "owner": "Jordan",
+    "tool": "trello_task",
+    "due": null,
+    "attendees_or_recipients": [],
+    "evidence_utterance_ids": ["u8"]
+  },
+  {
+    "id": "test1-gold-5",
+    "transcript_id": "test1",
+    "task": "Draft the release notes",
+    "owner": "Marcus",
+    "tool": "trello_task",
+    "due": "2026-09-04",
+    "attendees_or_recipients": [],
+    "evidence_utterance_ids": ["u9", "u10"]
+  },
+  {
+    "id": "test1-gold-6",
+    "transcript_id": "test1",
+    "task": "Create a task to track review of the release notes",
+    "owner": "Marcus",
+    "tool": "trello_task",
+    "due": "2026-09-04",
+    "attendees_or_recipients": [],
+    "evidence_utterance_ids": ["u10"]
+  }
+]

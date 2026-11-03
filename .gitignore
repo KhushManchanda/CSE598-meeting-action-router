@@ -1,0 +1,17 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Secrets
+.env
+
+# Runtime artifacts
+runs/
+*.sqlite3
+*.db
+
+# OS
+.DS_Store
+.pytest_cache/

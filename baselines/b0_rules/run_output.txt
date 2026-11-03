@@ -1,0 +1,40 @@
+
+=== Meeting Action-Item Router: baseline output for 'examples/test1.txt' ===
+
+[1] Owner: Priya
+    Action:        Great. Marcus will schedule a demo with the design team next week.
+    Routed tool:   schedule_event
+    Confirmation:  [CalendarAPI] Draft event created for Priya: 'Great. Marcus will schedule a demo with the design team next week.'. Awaiting owner to confirm a time slot.
+
+[2] Owner: Priya
+    Action:        Jordan needs to send an email to the data platform team about the pipeline bug.
+    Routed tool:   send_email
+    Confirmation:  [EmailAPI] Draft email queued to Priya re: 'Jordan needs to send an email to the data platform team about the pipeline bug.'. Saved to Drafts folder, not yet sent.
+
+[3] Owner: Marcus
+    Action:        Also, someone should follow up with legal about the new vendor contract.
+    Routed tool:   send_email
+    Confirmation:  [EmailAPI] Draft email queued to Marcus re: 'Also, someone should follow up with legal about the new vendor contract.'. Saved to Drafts folder, not yet sent.
+
+[4] Owner: Priya
+    Action:        I'll handle that one. Priya will email the legal team about the vendor contract.
+    Routed tool:   send_email
+    Confirmation:  [EmailAPI] Draft email queued to Priya re: 'I'll handle that one. Priya will email the legal team about the vendor contract.'. Saved to Drafts folder, not yet sent.
+
+[5] Owner: Jordan
+    Action:        Once the pipeline is fixed, Jordan will create a task to re-run the dashboard tests.
+    Routed tool:   create_task
+    Confirmation:  [TaskTrackerAPI] Task created and assigned to Jordan: 'Once the pipeline is fixed, Jordan will create a task to re-run the dashboard tests.'. Ticket opened 2026-09-05.
+
+[6] Owner: Priya
+    Action:        Last thing - we must write release notes before Friday's launch.
+    Routed tool:   create_task
+    Confirmation:  [TaskTrackerAPI] Task created and assigned to Priya: 'Last thing - we must write release notes before Friday's launch.'. Ticket opened 2026-09-05.
+
+[7] Owner: Marcus
+    Action:        Marcus will draft the release notes and create a task to track review.
+    Routed tool:   create_task
+    Confirmation:  [TaskTrackerAPI] Task created and assigned to Marcus: 'Marcus will draft the release notes and create a task to track review.'. Ticket opened 2026-09-05.
+
+Total action items found: 7
+Structured JSON output written to: examples/test1_output.json

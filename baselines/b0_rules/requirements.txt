@@ -1,0 +1,5 @@
+# The baseline uses only the Python standard library — no packages required.
+#
+# Uncommented for future phases, once the rule-based extractor/router in
+# agent.py is replaced with an LLM tool-calling call to the Claude API:
+# anthropic>=0.40.0

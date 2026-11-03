@@ -1,0 +1,51 @@
+[
+  {
+    "owner": "Priya",
+    "action": "Great. Marcus will schedule a demo with the design team next week.",
+    "routed_tool": "schedule_event",
+    "tool_status": "success",
+    "confirmation": "[CalendarAPI] Draft event created for Priya: 'Great. Marcus will schedule a demo with the design team next week.'. Awaiting owner to confirm a time slot."
+  },
+  {
+    "owner": "Priya",
+    "action": "Jordan needs to send an email to the data platform team about the pipeline bug.",
+    "routed_tool": "send_email",
+    "tool_status": "success",
+    "confirmation": "[EmailAPI] Draft email queued to Priya re: 'Jordan needs to send an email to the data platform team about the pipeline bug.'. Saved to Drafts folder, not yet sent."
+  },
+  {
+    "owner": "Marcus",
+    "action": "Also, someone should follow up with legal about the new vendor contract.",
+    "routed_tool": "send_email",
+    "tool_status": "success",
+    "confirmation": "[EmailAPI] Draft email queued to Marcus re: 'Also, someone should follow up with legal about the new vendor contract.'. Saved to Drafts folder, not yet sent."
+  },
+  {
+    "owner": "Priya",
+    "action": "I'll handle that one. Priya will email the legal team about the vendor contract.",
+    "routed_tool": "send_email",
+    "tool_status": "success",
+    "confirmation": "[EmailAPI] Draft email queued to Priya re: 'I'll handle that one. Priya will email the legal team about the vendor contract.'. Saved to Drafts folder, not yet sent."
+  },
+  {
+    "owner": "Jordan",
+    "action": "Once the pipeline is fixed, Jordan will create a task to re-run the dashboard tests.",
+    "routed_tool": "create_task",
+    "tool_status": "success",
+    "confirmation": "[TaskTrackerAPI] Task created and assigned to Jordan: 'Once the pipeline is fixed, Jordan will create a task to re-run the dashboard tests.'. Ticket opened 2026-09-05."
+  },
+  {
+    "owner": "Priya",
+    "action": "Last thing - we must write release notes before Friday's launch.",
+    "routed_tool": "create_task",
+    "tool_status": "success",
+    "confirmation": "[TaskTrackerAPI] Task created and assigned to Priya: 'Last thing - we must write release notes before Friday's launch.'. Ticket opened 2026-09-05."
+  },
+  {
+    "owner": "Marcus",
+    "action": "Marcus will draft the release notes and create a task to track review.",
+    "routed_tool": "create_task",
+    "tool_status": "success",
+    "confirmation": "[TaskTrackerAPI] Task created and assigned to Marcus: 'Marcus will draft the release notes and create a task to track review.'. Ticket opened 2026-09-05."
+  }
+]

@@ -1,0 +1,20 @@
+[
+  {
+    "name": "Priya",
+    "aliases": [],
+    "email": "priya@example.com",
+    "trello_member_id": "member_priya"
+  },
+  {
+    "name": "Marcus",
+    "aliases": [],
+    "email": "marcus@example.com",
+    "trello_member_id": "member_marcus"
+  },
+  {
+    "name": "Jordan",
+    "aliases": [],
+    "email": "jordan@example.com",
+    "trello_member_id": "member_jordan"
+  }
+]

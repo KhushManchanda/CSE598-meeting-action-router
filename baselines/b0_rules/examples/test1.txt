@@ -1,0 +1,13 @@
+Weekly Product Sync - September 2, 2026
+
+Priya: Thanks everyone for joining. Let's go around with updates.
+Marcus: The onboarding flow redesign is almost done, just polishing copy.
+Priya: Great. Marcus will schedule a demo with the design team next week.
+Jordan: I've been blocked on the analytics dashboard by a data pipeline bug.
+Priya: Jordan needs to send an email to the data platform team about the pipeline bug.
+Marcus: Also, someone should follow up with legal about the new vendor contract.
+Priya: I'll handle that one. Priya will email the legal team about the vendor contract.
+Jordan: Once the pipeline is fixed, Jordan will create a task to re-run the dashboard tests.
+Priya: Last thing - we must write release notes before Friday's launch.
+Marcus: Marcus will draft the release notes and create a task to track review.
+Priya: Sounds good, thanks all. Meeting adjourned.
