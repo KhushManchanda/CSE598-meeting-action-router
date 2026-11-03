@@ -83,8 +83,18 @@ class ActionItem(BaseModel):
     def _due_must_be_iso_date(cls, v: Optional[str]) -> Optional[str]:
         if v is None:
             return v
+        # Tolerate a full ISO-8601 datetime (LLM output occasionally
+        # includes a time/timezone even when asked for a bare date --
+        # found via a real eval/run_eval.py run where B1 returned
+        # "2026-10-08T17:00:00Z" for a trello_task due date) by
+        # normalizing to just the date part, rather than rejecting it
+        # outright. Every downstream consumer (agent/router.py's
+        # calendar start/end construction, eval/score.py's date
+        # comparisons) assumes `due` is exactly YYYY-MM-DD, so
+        # normalizing at this one shared boundary is safer than
+        # trusting every caller to pre-sanitize its own LLM output.
+        date_part = v.split("T")[0] if "T" in v else v
         try:
-            date_cls.fromisoformat(v)
+            return date_cls.fromisoformat(date_part).isoformat()
         except ValueError as exc:
             raise ValueError(f"due={v!r} is not an ISO-8601 date (YYYY-MM-DD)") from exc
-        return v

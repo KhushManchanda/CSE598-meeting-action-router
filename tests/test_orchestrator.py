@@ -14,6 +14,7 @@ from agent.ledger import ESCALATED, VERIFIED, Ledger
 from agent.llm import LLMCallResult
 from agent.orchestrator import run_meeting
 from agent.participants import Roster
+from agent.router import idempotency_key
 from agent.tools.mock_backend import MockCalendar, MockGmailDrafts, MockTrello
 
 ROSTER = Roster(
@@ -225,3 +226,76 @@ def test_prompt_injection_in_transcript_never_produces_an_unauthorized_write():
     assert len(report.escalated) == 1  # the injected item, rejected by roster validation
     assert len(tools["gmail"].all_objects()) == 0  # no email draft was ever created
     assert report.tool_calls_used == 1  # only the legitimate item ever reached execution
+
+
+def test_a_noval_skips_validator_and_lets_ungrounded_item_through():
+    """A-noval: owner not in roster would normally fail validation and
+    escalate after repairs; with the validator off, it should sail
+    straight through to approval/execution instead."""
+    client = _ScriptedLLMClient(
+        _extraction_result(ONE_CANDIDATE),
+        resolver_fn=lambda m: _finalize_result(owner="Nobody", tool="trello_task", task_text="x", due="2026-09-04"),
+    )
+    report = run_meeting(
+        TRANSCRIPT, MEETING_DATE, ROSTER, _tools(), "t1",
+        ledger=Ledger(":memory:"), llm_client=client, auto_approve=True,
+        enable_validator=False, print_fn=lambda s: None,
+    )
+    assert report.escalated == []
+    assert len(report.verified) == 1
+    assert report.verified[0]["created_object"]["assignee_member_id"] is None  # "Nobody" never resolves to a real id
+
+
+def test_a_norec_does_not_retry_transient_errors():
+    """A-norec: a transient 429 that execute_with_recovery would retry
+    and succeed on should instead escalate immediately, with exactly
+    one tool-call attempt."""
+    client = _ScriptedLLMClient(
+        _extraction_result(ONE_CANDIDATE),
+        resolver_fn=lambda m: _finalize_result(owner="Marcus", tool="trello_task", task_text="Draft release notes", due="2026-09-04"),
+    )
+    tools = _tools()
+    idem_key = idempotency_key("t1", "t1-1")
+    tools["trello"].set_fault_plan(idem_key, ["429"])
+
+    report = run_meeting(
+        TRANSCRIPT, MEETING_DATE, ROSTER, tools, "t1",
+        ledger=Ledger(":memory:"), llm_client=client, auto_approve=True,
+        enable_recovery=False, print_fn=lambda s: None,
+    )
+    assert report.verified == []
+    assert len(report.escalated) == 1
+    assert report.tool_calls_used == 1  # no retry
+    assert len(tools["trello"].all_objects()) == 0
+
+
+def test_a_norec_succeeds_without_reading_back_on_a_clean_run():
+    client = _ScriptedLLMClient(
+        _extraction_result(ONE_CANDIDATE),
+        resolver_fn=lambda m: _finalize_result(owner="Marcus", tool="trello_task", task_text="Draft release notes", due="2026-09-04"),
+    )
+    report = run_meeting(
+        TRANSCRIPT, MEETING_DATE, ROSTER, _tools(), "t1",
+        ledger=Ledger(":memory:"), llm_client=client, auto_approve=True,
+        enable_recovery=False, print_fn=lambda s: None,
+    )
+    assert len(report.verified) == 1
+    assert report.tool_calls_used == 1
+
+
+def test_a_norec_combined_with_calendar_due_none_escalates_not_crashes():
+    """Regression: same build_tool_args crash risk as verifier.py's,
+    but through orchestrator._execute_once_no_recovery (A-norec's
+    path). A-noval+A-norec together is the worst case: nothing catches
+    a due=None calendar_event before it reaches the router."""
+    client = _ScriptedLLMClient(
+        _extraction_result(ONE_CANDIDATE),
+        resolver_fn=lambda m: _finalize_result(owner="Marcus", tool="calendar_event", task_text="Demo", due=None),
+    )
+    report = run_meeting(
+        TRANSCRIPT, MEETING_DATE, ROSTER, _tools(), "t1",
+        ledger=Ledger(":memory:"), llm_client=client, auto_approve=True,
+        enable_validator=False, enable_recovery=False, print_fn=lambda s: None,
+    )
+    assert report.verified == []
+    assert len(report.escalated) == 1

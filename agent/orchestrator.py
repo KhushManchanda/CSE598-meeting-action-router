@@ -21,6 +21,17 @@ escalated/rejected) is skipped entirely rather than re-resolved/
 re-approved/re-executed -- see agent/ledger.py's module docstring for
 why this, plus idempotency keys, is what satisfies "rerunning a
 meeting must never create duplicate events or cards."
+
+Ablations (step 6/8, config flags on run_meeting):
+  enable_validator=False ("A-noval"): skip agent/validator.py entirely
+    -- no deterministic checks, no grounding check, no repair loop.
+    The resolver's raw output becomes the ActionItem as-is (still
+    pydantic-typed, since that's just the schema, not "the validator").
+  enable_recovery=False ("A-norec"): skip agent/verifier.py's read-back
+    and retry entirely -- call the tool once, trust success blindly,
+    escalate immediately (no retry) on any exception.
+Both default True (the real Agent A); eval/run_eval.py's ablation
+systems set them False to measure each stage's actual contribution.
 """
 
 from __future__ import annotations
@@ -38,9 +49,10 @@ from agent.ingestion import parse_transcript
 from agent.ledger import Ledger
 from agent.participants import Roster
 from agent.resolver import ResolvedAction, resolve
-from agent.router import idempotency_key
+from agent.router import build_tool_args, call_tool, idempotency_key
+from agent.schema import ALLOWED_TOOLS, ActionItem
 from agent.validator import validate
-from agent.verifier import execute_with_recovery
+from agent.verifier import VerifyOutcome, execute_with_recovery
 
 MAX_REPAIR_ATTEMPTS = 2
 DEFAULT_BUDGET = 40
@@ -98,10 +110,42 @@ def _apply_edits(item, edits: dict):
     return item.model_copy(update=edits) if edits else item
 
 
+def _build_item_unchecked(candidate, resolved_action, action_id: str, meeting_id: str) -> ActionItem:
+    """A-noval only: construct an ActionItem straight from the
+    resolver's output with none of agent/validator.py's checks --
+    still pydantic-typed (that's the schema, not "the validator"), but
+    an invalid owner/ungrounded claim/unresolved date all sail through
+    unchecked, by design, to measure what the validator actually buys."""
+    tool = resolved_action.tool if resolved_action.tool in ALLOWED_TOOLS else None
+    return ActionItem(
+        id=action_id,
+        transcript_id=meeting_id,
+        task=resolved_action.task_text or candidate.task,
+        owner=resolved_action.owner,
+        tool=tool,
+        due=resolved_action.due,
+        attendees_or_recipients=resolved_action.attendees_or_recipients,
+        evidence_utterance_ids=candidate.evidence_utterance_ids,
+    )
+
+
 def _resolve_validate_with_repair(
     candidate, meeting_date, roster, utterances, transcript_text, ledger, action_id,
     audit_log, meeting_id, llm_client, report, max_repair_attempts=MAX_REPAIR_ATTEMPTS,
+    enable_validator=True,
 ):
+    if not enable_validator:
+        # A-noval: one resolver call, no validate(), no repair loop --
+        # there is nothing to generate repair feedback FROM.
+        resolved_action = resolve(candidate, meeting_date, roster, utterances, llm_client=llm_client)
+        for llm_call in resolved_action.llm_calls:
+            audit_log.log_model_call(meeting_id, action_id, "resolver", llm_call)
+            report.total_cost_usd += llm_call.cost_usd or 0.0
+        ledger.set_resolved(action_id, resolved_action.owner, resolved_action.due, resolved_action.tool, resolved_action.attendees_or_recipients)
+        ledger.set_validation_result(action_id, errors=[])  # trivially "validated" -- ablation skips checking
+        resolved_item = _build_item_unchecked(candidate, resolved_action, action_id, meeting_id)
+        return resolved_item, resolved_action
+
     repair_feedback: Optional[str] = None
     for attempt in range(max_repair_attempts + 1):
         resolved_action = resolve(candidate, meeting_date, roster, utterances, llm_client=llm_client, repair_feedback=repair_feedback)
@@ -134,6 +178,21 @@ def _resolve_validate_with_repair(
     return None, None
 
 
+def _execute_once_no_recovery(resolved_item, resolved_action, roster, tools, idem_key) -> VerifyOutcome:
+    """A-norec: call the tool exactly once, trust success blindly (no
+    read-back), escalate immediately on any exception (no retry).
+    build_tool_args is inside the try for the same reason as
+    agent/verifier.py's execute_with_recovery: it can raise too (e.g. a
+    calendar_event with due=None, which the validator normally
+    prevents -- but A-noval combined with A-norec skips every check)."""
+    try:
+        args = build_tool_args(resolved_item, resolved_action, roster)
+        created = call_tool(resolved_item.tool, args, tools, idem_key)
+    except Exception as exc:  # noqa: BLE001 -- ablation: no recovery logic at all
+        return VerifyOutcome(verified=False, outcome="escalate", error=f"{type(exc).__name__}: {exc}", attempts=1)
+    return VerifyOutcome(verified=True, outcome="verified", created_object=created, attempts=1)
+
+
 def _append_existing_to_report(report: RunReport, record) -> None:
     report.skipped_already_done.append({"id": record.id, "state": record.state, "task": record.task})
     if record.state == ledger_module.VERIFIED:
@@ -157,6 +216,8 @@ def run_meeting(
     budget: int = DEFAULT_BUDGET,
     input_fn: Callable[[str], str] = input,
     print_fn: Callable[[str], None] = print,
+    enable_validator: bool = True,
+    enable_recovery: bool = True,
 ) -> RunReport:
     own_ledger = ledger is None
     ledger = ledger or Ledger(":memory:")
@@ -185,7 +246,7 @@ def run_meeting(
 
             resolved_item, resolved_action = _resolve_validate_with_repair(
                 candidate, meeting_date, roster, utterances, transcript_text, ledger, action_id,
-                audit_log, meeting_id, llm_client, report,
+                audit_log, meeting_id, llm_client, report, enable_validator=enable_validator,
             )
             if resolved_item is None:
                 continue  # escalated inside the repair loop
@@ -225,7 +286,10 @@ def run_meeting(
             idem_key = idempotency_key(meeting_id, action_id)
             ledger.set_idempotency_key(action_id, idem_key)
             resolved_action_for_router = resolved_action if decision.decision != "edited" else _resolved_action_from_item(resolved_item)
-            outcome = execute_with_recovery(resolved_item, resolved_action_for_router, roster, tools, idem_key)
+            if enable_recovery:
+                outcome = execute_with_recovery(resolved_item, resolved_action_for_router, roster, tools, idem_key)
+            else:
+                outcome = _execute_once_no_recovery(resolved_item, resolved_action_for_router, roster, tools, idem_key)
             report.tool_calls_used += outcome.attempts
 
             ledger.record_execution_attempt(action_id, success=outcome.verified, created_object=outcome.created_object, error=outcome.error)

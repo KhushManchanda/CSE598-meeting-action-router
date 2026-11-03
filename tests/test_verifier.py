@@ -120,3 +120,19 @@ def test_readback_mismatch_escalates():
     assert outcome.verified is False
     assert outcome.outcome == "escalate"
     assert any("title" in m for m in outcome.mismatches)
+
+
+def test_calendar_event_with_no_due_date_escalates_instead_of_crashing():
+    """Regression: build_tool_args raises for tool=calendar_event with
+    due=None (agent/router.py's _calendar_start_end needs a real date).
+    The validator normally prevents this from ever reaching here, but
+    A-noval skips the validator -- this must escalate, not propagate an
+    unhandled exception and crash the whole eval run (found via a real
+    eval/run_eval.py run exercising A-noval for real)."""
+    tools = _tools()
+    item = _item(tool="calendar_event", due=None)
+    outcome = execute_with_recovery(item, _resolved_action(tool="calendar_event", due=None), ROSTER, tools, "idem-1", sleep_fn=_no_sleep)
+    assert outcome.verified is False
+    assert outcome.outcome == "escalate"
+    assert "due_date" in outcome.error or "NoneType" in outcome.error or "None" in outcome.error
+    assert len(tools["calendar"].all_objects()) == 0

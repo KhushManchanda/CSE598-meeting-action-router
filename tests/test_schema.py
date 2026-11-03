@@ -60,3 +60,20 @@ def test_category_defaults_to_none():
 def test_category_rejects_unknown_value():
     with pytest.raises(ValidationError):
         ActionItem(id="t-1", transcript_id="t", task="x", category="not_a_real_category")
+
+
+def test_due_with_full_datetime_is_normalized_to_date_only():
+    # Regression: B1 returned "2026-10-08T17:00:00Z" for a trello_task
+    # due date in a real eval run; this must normalize, not crash.
+    item = ActionItem(id="t-1", transcript_id="t", task="x", due="2026-10-08T17:00:00Z")
+    assert item.due == "2026-10-08"
+
+
+def test_due_with_datetime_no_timezone_is_normalized():
+    item = ActionItem(id="t-1", transcript_id="t", task="x", due="2026-10-08T09:00:00")
+    assert item.due == "2026-10-08"
+
+
+def test_due_with_invalid_date_part_after_t_still_raises():
+    with pytest.raises(ValidationError):
+        ActionItem(id="t-1", transcript_id="t", task="x", due="not-a-date T whatever")

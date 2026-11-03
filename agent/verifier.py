@@ -72,7 +72,6 @@ def execute_with_recovery(
     sleep_fn: Callable[[float], None] = time.sleep,
     backoff_fn: Callable[[int], float] = lambda attempt: 0.5 * (2 ** (attempt - 1)),
 ) -> VerifyOutcome:
-    args = build_tool_args(resolved_item, resolved_action, roster)
     tool = resolved_item.tool
     attempt = 0
     last_error: Optional[BaseException] = None
@@ -80,6 +79,12 @@ def execute_with_recovery(
     while attempt < max_retries:
         attempt += 1
         try:
+            # build_tool_args is deliberately INSIDE the try: it can raise
+            # too (e.g. a calendar_event with due=None, which the validator
+            # normally prevents from ever reaching here -- but A-noval
+            # skips the validator, and this must escalate, not crash the
+            # whole eval run, when that guarantee doesn't hold).
+            args = build_tool_args(resolved_item, resolved_action, roster)
             created = call_tool(tool, args, tools, idem_key)
         except InvalidArgumentError as exc:
             return VerifyOutcome(verified=False, outcome="needs_resolver_repair", error=str(exc), attempts=attempt)

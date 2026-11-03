@@ -80,7 +80,8 @@ TOOLS = [
                     },
                     "due": {
                         "type": ["string", "null"],
-                        "description": "ISO 8601 date, or null if no confidently-resolvable due date.",
+                        "description": "ISO-8601 DATE ONLY (YYYY-MM-DD) -- no time, no timezone. "
+                        "Null if no confidently-resolvable due date.",
                     },
                     "list_id": {"type": "string", "description": f"Always '{DEFAULT_TRELLO_LIST_ID}'."},
                     "description": {"type": "string"},
