@@ -59,6 +59,7 @@ class LLMClient:
         self,
         messages: list[dict],
         tools: Optional[list[dict]] = None,
+        tool_choice: Optional[Any] = None,
         response_format: Optional[dict] = None,
     ) -> LLMCallResult:
         client = self._get_client()
@@ -66,6 +67,8 @@ class LLMClient:
         kwargs: dict[str, Any] = {"model": self.model, "temperature": self.temperature, "messages": messages}
         if tools:
             kwargs["tools"] = tools
+        if tool_choice is not None:
+            kwargs["tool_choice"] = tool_choice
         if response_format:
             kwargs["response_format"] = response_format
 

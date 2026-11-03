@@ -87,3 +87,27 @@ def test_constructing_client_does_not_require_api_key(monkeypatch):
     # Must not raise even with no key set -- the real SDK client is only
     # built lazily inside complete(), not here.
     LLMClient(model="gpt-4o-mini")
+
+
+def test_complete_passes_tool_choice_through_when_given():
+    fake = _FakeOpenAIClient(_fake_response(content="ok"))
+    client = LLMClient(model="gpt-4o-mini")
+    client._client = fake
+
+    client.complete(
+        messages=[{"role": "user", "content": "hi"}],
+        tools=[{"type": "function", "function": {"name": "f"}}],
+        tool_choice={"type": "function", "function": {"name": "f"}},
+    )
+
+    assert fake.last_kwargs["tool_choice"] == {"type": "function", "function": {"name": "f"}}
+
+
+def test_complete_omits_tool_choice_when_not_given():
+    fake = _FakeOpenAIClient(_fake_response(content="ok"))
+    client = LLMClient(model="gpt-4o-mini")
+    client._client = fake
+
+    client.complete(messages=[{"role": "user", "content": "hi"}])
+
+    assert "tool_choice" not in fake.last_kwargs
