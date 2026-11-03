@@ -1,0 +1,10 @@
+Weekly Engineering Sync
+Dana: Morning everyone, let's do a quick round.
+Omar: The auth service migration is almost done, just finishing tests.
+Dana: Great. Omar will deploy the auth service to staging by Thursday.
+Lily: I've been stuck on the new dashboard, the API is returning stale data.
+Dana: Lily needs to file a bug with the data platform team about the stale cache.
+Omar: Also, we should probably look into switching the CI runner at some point.
+Dana: Noted, not urgent. Lily, can you also send Omar the updated API docs before our next sync?
+Omar: Sounds good. I'll review them Friday morning.
+Dana: Great, thanks all. Meeting adjourned.

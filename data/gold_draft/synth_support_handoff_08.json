@@ -1,0 +1,5 @@
+[
+  {"id": "synth_support_handoff_08-gold-1", "transcript_id": "synth_support_handoff_08", "task": "Respond to the billing escalation", "owner": "Owen", "tool": "trello_task", "due": null, "attendees_or_recipients": [], "evidence_utterance_ids": ["u3"], "category": "multiple_actions_one_line"},
+  {"id": "synth_support_handoff_08-gold-2", "transcript_id": "synth_support_handoff_08", "task": "Loop in Faith on the enterprise account issue", "owner": "Owen", "tool": "email_draft", "due": "2026-11-05", "attendees_or_recipients": ["faith@example.com"], "evidence_utterance_ids": ["u3"], "category": "multiple_actions_one_line"},
+  {"id": "synth_support_handoff_08-gold-3", "transcript_id": "synth_support_handoff_08", "task": "Review the enterprise account history once looped in", "owner": "Faith", "tool": "trello_task", "due": null, "attendees_or_recipients": [], "evidence_utterance_ids": ["u4"], "category": "multi_turn_delegation"}
+]

@@ -1,0 +1,16 @@
+{
+  "source_meeting": "ES2011c",
+  "source_corpus": "AMI Meeting Corpus, manual annotations v1.6.2 (CC BY 4.0)",
+  "source_url": "https://groups.inf.ed.ac.uk/ami/AMICorpusAnnotations/ami_public_manual_1.6.2.zip",
+  "meeting_date": "2005-02-18",
+  "utterance_range_in_full_transcript": [
+    300,
+    362
+  ],
+  "speaker_role_map": {
+    "A": "PM",
+    "B": "ID",
+    "C": "UI",
+    "D": "ME"
+  }
+}

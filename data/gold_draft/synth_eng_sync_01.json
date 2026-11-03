@@ -1,0 +1,6 @@
+[
+  {"id": "synth_eng_sync_01-gold-1", "transcript_id": "synth_eng_sync_01", "task": "Deploy the auth service to staging", "owner": "Omar", "tool": "trello_task", "due": "2026-10-08", "attendees_or_recipients": [], "evidence_utterance_ids": ["u3"], "category": "speaker_differs_from_owner"},
+  {"id": "synth_eng_sync_01-gold-2", "transcript_id": "synth_eng_sync_01", "task": "File a bug with the data platform team about the stale cache", "owner": "Lily", "tool": "trello_task", "due": null, "attendees_or_recipients": [], "evidence_utterance_ids": ["u5"], "category": "speaker_differs_from_owner"},
+  {"id": "synth_eng_sync_01-gold-3", "transcript_id": "synth_eng_sync_01", "task": "Send Omar the updated API docs before the next sync", "owner": "Lily", "tool": "email_draft", "due": null, "attendees_or_recipients": ["omar@example.com"], "evidence_utterance_ids": ["u7"], "category": "relative_date"},
+  {"id": "synth_eng_sync_01-gold-4", "transcript_id": "synth_eng_sync_01", "task": "Review the updated API docs", "owner": "Omar", "tool": "trello_task", "due": "2026-10-09", "attendees_or_recipients": [], "evidence_utterance_ids": ["u8"], "category": "baseline"}
+]

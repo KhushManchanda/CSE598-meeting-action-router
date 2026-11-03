@@ -1,0 +1,9 @@
+Design Review
+Jordan: Quick design review, let's keep this tight.
+Mia: I finished the onboarding flow mockups, they're in Figma.
+Theo: Nice, I'll run usability tests on them and write up the findings by October 20th.
+Jordan: Great. Mia, can you also update the style guide and share it with the whole team?
+Mia: Yep, I'll update the style guide today and send it out tomorrow.
+Jordan: Perfect. Theo, once you're done with testing, can you also schedule a readout meeting with stakeholders?
+Theo: Sure, I'll set that up for October 22nd.
+Jordan: Thanks both, that's everything.

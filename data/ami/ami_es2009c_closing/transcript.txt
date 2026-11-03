@@ -1,0 +1,66 @@
+AMI Meeting Corpus excerpt ES2009c (utterances 313-377 of full transcript)
+Marketing Expert: And they slide.
+Project Manager: Yes.
+Marketing Expert: Well and do we wanna consider like an iPod screen which isn't a touch screen but you're still scrolling through menu options, in p
+User Interface Designer: Think then we're hitting our cost issue again.
+Marketing Expert: True, we're still not making it easier then.
+Project Manager: Yeah we've also got the the me the thing of, if we're gonna have a non-remote-looking remote, how do we yeah. B But no I mean we could do a slide or a compartment, you know, like if it say it's a lit little vaguely ovoidal type of thing, it'd be easy to have a compartment in there. Or you know, a b a b a a series of you know three or four buttons with a menu button and then a side an s up and down type of thing, like on um like on a D_V_D_ player. You know you see the modern D_V_D_ players'll just have um a menu button on the side and then four buttons around them and you can just kind of manoeuvre through the menu like that.
+Industrial Designer: Yeah.
+Marketing Expert: True.
+Marketing Expert: Fair enough.
+Marketing Expert: Yeah.
+Marketing Expert: Mm-hmm.
+Marketing Expert: Yeah it's just a scroll.
+Industrial Designer: Right.
+Marketing Expert: Yeah.
+Industrial Designer: So are we gonna are we talking we need to figure out what kind of buttons we're going to use, are we going to use scroll buttons? Rubber buttons? Um
+Project Manager: Well it seems like I dunno it seems to me that we could just do the um stick with the rubber 'cause since we're probably gonna be using some kind of um rubber for the outside case we might as well stick with that um.
+Marketing Expert: Yeah.
+Marketing Expert: Probably.
+Industrial Designer: Right.
+User Interface Designer: I think to a certain extent we have to stick with uh kind of uh a little bit traditional in terms of the buttons and then and then make our unique feature our casing and what not and our voice command.
+Marketing Expert: Right.
+Marketing Expert: Mm.
+Marketing Expert: Well no it's basic just like four directions that are that can use as menu or channel and volume or however you wanna do it, are really versatile and everybody's already got them to some extent on the remotes they already own so it's not like we're dealing with everybody relearning things 'cause that's not something anybody's gonna wanna buy a new for.
+Industrial Designer: Right.
+Project Manager: Mm 'kay, um.
+Project Manager: We've already kind of covered this as well. That seems to be selling um and we we've more or less agreed that we want to kar target this youth market, um. Especially now with eighteen to thirty five year olds being such a large quantity of the population.
+Marketing Expert: Mm.
+Marketing Expert: Right, particularly in technological fields, so that's exactly where we're headed.
+Project Manager: Mm-hmm, mm-hmm.
+Project Manager: Okay.
+Project Manager: Um.
+Project Manager: Yeah alright, well, more or less covered what we need to cover I think fi an an any final thoughts before we think about doing the protot moving on to the prototype.
+User Interface Designer: Well what are we actually doing? What were
+Project Manager: Right. I was just gonna step on to um I wasn't? Oh, my bad um sorry. The um, yeah okay I was just gonna assign tasks in the next b anyth any oth any other final thoughts before we go ahead and cool?
+Marketing Expert: Uh.
+Marketing Expert: Oh it wasn't in the way but yeah, whatever.
+Marketing Expert: No, don't worry about it.
+User Interface Designer: Sure.
+Marketing Expert: Okay.
+Industrial Designer: So have we decided that we are gonna go with different style cases for different people? Or are we just going to go with one?
+Marketing Expert: Yeah.
+Project Manager: Um.
+Industrial Designer: ..It's very, it's very hard thing to predict because you have different cases and that might open up your market a little bit obviously, but if you have just one case and it doesn't go very well mm. It's a tough situation, but obviously having more cases also costs more so
+Marketing Expert: Yeah.
+Project Manager: Yeah.
+Marketing Expert: Right.
+Project Manager: Well then again colours wouldn't be so hard to do, you could have uh a, you know, a um uh kind of a natural wood colour, like a stained wood and um, I don't know, olive green or something. That wouldn't be so much of a problem to incorporate into the colour of the thing.
+Industrial Designer: There's an idea.
+Marketing Expert: Mm.
+Marketing Expert: Yeah.
+User Interface Designer: And again copying iMac's kind of for iPod Mac Apple's uh colour scheme.
+Marketing Expert: Yeah, get in there.
+Marketing Expert: Yeah, totally.
+Project Manager: Yeah, I think that's probably a good id okay so let's work on uh multiple case colours.
+Project Manager: But yeah, stick with the same kind of kinda yeah, the same basic non-remote kind of remote design.
+Project Manager: Cool.
+Project Manager: Alright, so we'll have the next meeting about half an hour, um. I want the uh I'd like Nathan, I'd like you to work on just the basic look and feel, what can we accomplish, um, given these parameters that we're just gonna sort of have this kind of uh non-remote remote. Um, what are our broad constraints before we deve design a prototype. And um Ron if you can
+Industrial Designer: Right.
+Project Manager: figure out how probably best to lay out this idea of this simple design with the voice recognition built in and also this kind of drop down or s on the side kind of menu options simple. Somehow work out how we can get this all s in the same place.
+Project Manager: Um, and if you can check product evaluation with m some pilots and stuff. Um I need you guys to work together on making a prototype, um using um prototype building materials um. And also um specific instructions will be sent to you by your coaches as well. So that's what to start with for now, is that alright, you guys feel clear about this?
+Industrial Designer: Oh excellent yeah.
+Marketing Expert: Cool.
+Industrial Designer: That sounds good.
+User Interface Designer: Fabulous.
+Project Manager: Alright. I guess we'll just hit the bricks. Thanks guys.

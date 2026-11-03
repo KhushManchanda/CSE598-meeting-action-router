@@ -1,0 +1,9 @@
+Support Shift Change
+Nina: Quick handoff before shift change.
+Owen: Ticket queue is clear except for two escalations.
+Nina: Owen will respond to the billing escalation and also loop in Faith on the enterprise account issue by November 5th.
+Faith: Got it, I'll review that account history once Owen loops me in.
+Owen: We could maybe build a macro for this later, not a priority right now.
+Nina: Agreed, skip that for now.
+Faith: One more thing, I already sent the apology email to the enterprise customer yesterday.
+Nina: Perfect, thanks team.

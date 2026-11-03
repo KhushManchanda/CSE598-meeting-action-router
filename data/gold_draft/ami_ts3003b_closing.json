@@ -1,0 +1,6 @@
+[
+  {"id": "ami_ts3003b_closing-gold-1", "transcript_id": "ami_ts3003b_closing", "task": "Do the components concept", "owner": "Industrial Designer", "tool": "trello_task", "due": null, "attendees_or_recipients": [], "evidence_utterance_ids": ["u39"], "category": "speaker_differs_from_owner"},
+  {"id": "ami_ts3003b_closing-gold-2", "transcript_id": "ami_ts3003b_closing", "task": "Do the user interface concept", "owner": "User Interface Designer", "tool": "trello_task", "due": null, "attendees_or_recipients": [], "evidence_utterance_ids": ["u39"], "category": "speaker_differs_from_owner"},
+  {"id": "ami_ts3003b_closing-gold-3", "transcript_id": "ami_ts3003b_closing", "task": "Do the trend-watching", "owner": null, "tool": "trello_task", "due": null, "attendees_or_recipients": [], "evidence_utterance_ids": ["u39", "u40"], "category": "ambiguous_escalate"},
+  {"id": "ami_ts3003b_closing-gold-4", "transcript_id": "ami_ts3003b_closing", "task": "Put the minutes in the project document folder", "owner": "Project Manager", "tool": "trello_task", "due": null, "attendees_or_recipients": [], "evidence_utterance_ids": ["u39"], "category": "baseline"}
+]

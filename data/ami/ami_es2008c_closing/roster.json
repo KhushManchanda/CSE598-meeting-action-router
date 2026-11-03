@@ -1,0 +1,34 @@
+[
+  {
+    "name": "Project Manager",
+    "aliases": [
+      "PM"
+    ],
+    "email": "project.manager@example.com",
+    "trello_member_id": "member_pm"
+  },
+  {
+    "name": "Industrial Designer",
+    "aliases": [
+      "ID"
+    ],
+    "email": "industrial.designer@example.com",
+    "trello_member_id": "member_id"
+  },
+  {
+    "name": "User Interface Designer",
+    "aliases": [
+      "UI"
+    ],
+    "email": "user.interface.designer@example.com",
+    "trello_member_id": "member_ui"
+  },
+  {
+    "name": "Marketing Expert",
+    "aliases": [
+      "ME"
+    ],
+    "email": "marketing.expert@example.com",
+    "trello_member_id": "member_me"
+  }
+]

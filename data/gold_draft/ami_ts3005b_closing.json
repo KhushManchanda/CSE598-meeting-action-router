@@ -1,0 +1,4 @@
+[
+  {"id": "ami_ts3005b_closing-gold-1", "transcript_id": "ami_ts3005b_closing", "task": "Write the minutes and put them in the project documents folder", "owner": "Project Manager", "tool": "trello_task", "due": null, "attendees_or_recipients": [], "evidence_utterance_ids": ["u36"], "category": "baseline"},
+  {"id": "ami_ts3005b_closing-gold-2", "transcript_id": "ami_ts3005b_closing", "task": "Individual actions for the other roles (not actually specified in this excerpt)", "owner": null, "tool": "trello_task", "due": null, "attendees_or_recipients": [], "evidence_utterance_ids": ["u36"], "category": "ambiguous_escalate"}
+]

@@ -1,0 +1,10 @@
+Incident Follow-up Review
+Taylor: Let's go through the incident follow-ups.
+Sam: The database failover worked fine during the drill.
+Riley: Good. He should document the failover steps in the runbook though.
+Taylor: Yeah, Sammy, can you write that up by November 3rd?
+Sam: Sure thing.
+Riley: Also, I'll rotate the exposed API keys today.
+Taylor: Thanks. T-Dog will schedule a retro meeting with the whole team for next Thursday.
+Taylor: Wait, that's me. I'll schedule the retro for next Thursday.
+Taylor: Alright, that's everything.

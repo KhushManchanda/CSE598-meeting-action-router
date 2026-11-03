@@ -1,0 +1,4 @@
+[
+  {"id": "synth_marketing_02-gold-1", "transcript_id": "synth_marketing_02", "task": "Proofread the blog post draft before publishing", "owner": "Sana", "tool": "trello_task", "due": null, "attendees_or_recipients": [], "evidence_utterance_ids": ["u3", "u4", "u5"], "category": "multi_turn_delegation"},
+  {"id": "synth_marketing_02-gold-2", "transcript_id": "synth_marketing_02", "task": "Put together the banner ad copy for the holiday campaign", "owner": "Noah", "tool": "trello_task", "due": "2026-10-13", "attendees_or_recipients": [], "evidence_utterance_ids": ["u9"], "category": "pronoun_or_alias"}
+]

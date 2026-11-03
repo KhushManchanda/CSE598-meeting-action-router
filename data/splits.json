@@ -1,0 +1,23 @@
+{
+  "_comment": "Spec: 'Dev split: test1.txt plus about 5 synthetic transcripts. Everything else is held-out test.' NEVER tune prompts, few-shot examples, or thresholds against test-split transcript_ids -- see data/ANNOTATION_GUIDE.md.",
+  "dev": [
+    "test1",
+    "synth_eng_sync_01",
+    "synth_marketing_02",
+    "synth_design_review_03",
+    "synth_standup_04",
+    "synth_prompt_injection_06"
+  ],
+  "test": [
+    "synth_vendor_call_05",
+    "synth_ops_review_07",
+    "synth_support_handoff_08",
+    "ami_es2008c_closing",
+    "ami_es2009c_closing",
+    "ami_es2011c_closing",
+    "ami_is1003b_closing",
+    "ami_is1003c_closing",
+    "ami_ts3003b_closing",
+    "ami_ts3005b_closing"
+  ]
+}

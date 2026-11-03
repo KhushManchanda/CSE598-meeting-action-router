@@ -1,0 +1,6 @@
+[
+  {"id": "synth_design_review_03-gold-1", "transcript_id": "synth_design_review_03", "task": "Run usability tests on the onboarding mockups and write up findings", "owner": "Theo", "tool": "trello_task", "due": "2026-10-20", "attendees_or_recipients": [], "evidence_utterance_ids": ["u3"], "category": "absolute_date"},
+  {"id": "synth_design_review_03-gold-2", "transcript_id": "synth_design_review_03", "task": "Update the style guide", "owner": "Mia", "tool": "trello_task", "due": "2026-10-13", "attendees_or_recipients": [], "evidence_utterance_ids": ["u4", "u5"], "category": "multiple_actions_one_line"},
+  {"id": "synth_design_review_03-gold-3", "transcript_id": "synth_design_review_03", "task": "Send the updated style guide to the whole team", "owner": "Mia", "tool": "email_draft", "due": "2026-10-14", "attendees_or_recipients": ["jordan@example.com", "mia@example.com", "theo@example.com"], "evidence_utterance_ids": ["u4", "u5"], "category": "multiple_actions_one_line"},
+  {"id": "synth_design_review_03-gold-4", "transcript_id": "synth_design_review_03", "task": "Schedule a readout meeting with stakeholders", "owner": "Theo", "tool": "calendar_event", "due": "2026-10-22", "attendees_or_recipients": [], "evidence_utterance_ids": ["u6", "u7"], "category": "absolute_date"}
+]

@@ -1,0 +1,5 @@
+[
+  {"id": "synth_vendor_call_05-gold-1", "transcript_id": "synth_vendor_call_05", "task": "Sign off on the new vendor pricing", "owner": "Jamie", "tool": "trello_task", "due": null, "attendees_or_recipients": [], "evidence_utterance_ids": ["u2"], "category": "relative_date"},
+  {"id": "synth_vendor_call_05-gold-2", "transcript_id": "synth_vendor_call_05", "task": "Push back on the vendor about the data retention clause", "owner": null, "tool": "email_draft", "due": null, "attendees_or_recipients": [], "evidence_utterance_ids": ["u3", "u4", "u5", "u6"], "category": "ambiguous_escalate"},
+  {"id": "synth_vendor_call_05-gold-3", "transcript_id": "synth_vendor_call_05", "task": "Send the updated budget numbers to Harper", "owner": "Jamie", "tool": "email_draft", "due": "2026-10-23", "attendees_or_recipients": ["harper@example.com"], "evidence_utterance_ids": ["u7"], "category": "baseline"}
+]

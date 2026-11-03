@@ -1,0 +1,5 @@
+[
+  {"id": "ami_is1003b_closing-gold-1", "transcript_id": "ami_is1003b_closing", "task": "Put together the components concept", "owner": "Industrial Designer", "tool": "trello_task", "due": null, "attendees_or_recipients": [], "evidence_utterance_ids": ["u60", "u61", "u63"], "category": "speaker_differs_from_owner"},
+  {"id": "ami_is1003b_closing-gold-2", "transcript_id": "ami_is1003b_closing", "task": "Work on the user interface concept", "owner": "User Interface Designer", "tool": "trello_task", "due": null, "attendees_or_recipients": [], "evidence_utterance_ids": ["u60"], "category": "speaker_differs_from_owner"},
+  {"id": "ami_is1003b_closing-gold-3", "transcript_id": "ami_is1003b_closing", "task": "Work on [the PM's assigned subject/topic] (Florent)", "owner": null, "tool": "trello_task", "due": null, "attendees_or_recipients": [], "evidence_utterance_ids": ["u65", "u66"], "category": "pronoun_or_alias"}
+]

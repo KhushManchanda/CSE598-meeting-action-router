@@ -1,0 +1,47 @@
+AMI Meeting Corpus excerpt ES2008c (utterances 350-395 of full transcript)
+User Interface Designer: Yeah, yeah, it's uh it's it's fairly simple.
+Industrial Designer: Yeah. I say pushbuttons at least unless we get any information but I have no idea how much more expensive a scroll wheel is than than a pushbutton, but it's gotta be some more expensive, so I think it might be better to put our money into the stuff like the kinetic battery and the cool case
+User Interface Designer: Yeah.
+Project Manager: Mm-hmm. Is that okay with you? How you feeling?
+User Interface Designer: Yeah. Interesting.
+Industrial Designer: because
+Marketing Expert: Yeah. And let's like see if we get anything else. I mean I'm not like hard-sold on the scroll wheel, it's more just to give it a different kind of look, but if it's gonna be in a latex type thing and that's gonna look cool, then that's probably gonna have a bigger impact than the scroll wheel.
+Project Manager: Mm-hmm.
+Project Manager: It might be cool enough.
+Industrial Designer: Yeah.
+Project Manager: Okay, so we're gonna go with um type pushbuttons, and then supplements, how are we gonna do that?
+User Interface Designer: Yep.
+User Interface Designer: Uh what do you mean by supplements, exactly?
+Project Manager: Um I assume that's what else we're gonna like h ha the um the additional buttons we can use.
+User Interface Designer: Um
+Industrial Designer: Oh.
+Project Manager: So we're gonna have like a menu button, so that we can access on-screen things then? Okay, um so we're doing an on-screen menu that we can scroll through.
+User Interface Designer: Yep.
+User Interface Designer: Yeah.
+Industrial Designer: Alright.
+User Interface Designer: Um in
+Industrial Designer: So what are what are our buttons gonna be? On off
+User Interface Designer: Yeah.
+User Interface Designer: On off, uh volume, favourite channels, uh and menu. Yeah, yeah about yeah like yeah, a bit like radio presets. Um
+Industrial Designer: So like one through five, or
+Marketing Expert: Like a radio type sorta situation?
+Project Manager: Pre-set channels and then we're gonna need um numbers one through zero, right?
+User Interface Designer: Uh we wouldn't even need the numbers.
+Industrial Designer: No.
+User Interface Designer: I think maybe numbers seems is kind of old-fashioned.
+Project Manager: Well, but in order to pre-set a cha oh I guess you can just hold it down when you get to one when you're scrolling through.
+User Interface Designer: Yeah, yeah, you can just and you need some kind of, I dunno, sort of up down kind of button, but the volume control could double for that, for example.
+Industrial Designer: Mm.
+Industrial Designer: Yeah, up down.
+Project Manager: Mm-hmm. Okay, um finishing the meeting now. Um our next meeting starts in thirty minutes, um you each have things to do, look and feel design, user interface design, product evaluation, and you two are going to work together on a prototype using modelling clay. You'll get specific instructions from your personal coach.
+User Interface Designer: Cool.
+Industrial Designer: Ooh.
+Marketing Expert: Wow.
+Project Manager: Um did we decide on a chip? Let's go with a simple chip? Okay.
+Industrial Designer: Simple chip.
+User Interface Designer: Yep.
+Project Manager: We are done. Thank you everyone.
+Project Manager: Oh I di these are already in our shared folder, so.
+Industrial Designer: Okay, cool.
+User Interface Designer: Clay. I wasn't expecting that.
+Industrial Designer: Clay.

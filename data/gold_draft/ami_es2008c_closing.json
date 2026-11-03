@@ -1,0 +1,6 @@
+[
+  {"id": "ami_es2008c_closing-gold-1", "transcript_id": "ami_es2008c_closing", "task": "Work on look and feel design", "owner": null, "tool": "trello_task", "due": null, "attendees_or_recipients": [], "evidence_utterance_ids": ["u35"], "category": "ambiguous_escalate"},
+  {"id": "ami_es2008c_closing-gold-2", "transcript_id": "ami_es2008c_closing", "task": "Work on user interface design", "owner": null, "tool": "trello_task", "due": null, "attendees_or_recipients": [], "evidence_utterance_ids": ["u35"], "category": "ambiguous_escalate"},
+  {"id": "ami_es2008c_closing-gold-3", "transcript_id": "ami_es2008c_closing", "task": "Work on product evaluation", "owner": null, "tool": "trello_task", "due": null, "attendees_or_recipients": [], "evidence_utterance_ids": ["u35"], "category": "ambiguous_escalate"},
+  {"id": "ami_es2008c_closing-gold-4", "transcript_id": "ami_es2008c_closing", "task": "Work together on a prototype using modelling clay", "owner": null, "tool": "trello_task", "due": null, "attendees_or_recipients": [], "evidence_utterance_ids": ["u35"], "category": "ambiguous_escalate"}
+]

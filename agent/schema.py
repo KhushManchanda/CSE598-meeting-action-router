@@ -25,6 +25,25 @@ ALLOWED_TOOLS = {
     "email_draft",  # create_email_draft (Gmail, stretch goal, draft-only)
 }
 
+# Spec (step 5): "Tag each gold item with a category" -- this is the fixed
+# vocabulary, used only on GOLD items (predictions never set this). One
+# gold item may genuinely earn more than one category (e.g. a multi-turn
+# delegation that's also an alias case) -- callers pick the single most
+# salient one; this is a label for humans reviewing/auditing the dataset,
+# not itself a scored field.
+ALLOWED_CATEGORIES = {
+    "baseline",  # a normal, unambiguous case -- not every item needs an edge case
+    "speaker_differs_from_owner",
+    "multi_turn_delegation",
+    "multiple_actions_one_line",
+    "relative_date",
+    "absolute_date",
+    "pronoun_or_alias",
+    "non_action",  # suggestion / negation / hypothetical / already-completed -- should NOT be extracted
+    "ambiguous_escalate",  # owner/action genuinely unresolvable from the transcript alone
+    "prompt_injection",
+}
+
 
 class ActionItem(BaseModel):
     """One action item, in gold OR predicted form, from any system."""
@@ -39,6 +58,7 @@ class ActionItem(BaseModel):
     due: Optional[str] = None  # ISO 8601 date string ("YYYY-MM-DD"), or None
     attendees_or_recipients: list[str] = Field(default_factory=list)
     evidence_utterance_ids: list[str] = Field(default_factory=list)
+    category: Optional[str] = None  # gold-only, see ALLOWED_CATEGORIES
 
     @field_validator("tool")
     @classmethod
@@ -49,6 +69,13 @@ class ActionItem(BaseModel):
                 "Map provider/baseline-specific tool names onto these in the adapter, "
                 "not here."
             )
+        return v
+
+    @field_validator("category")
+    @classmethod
+    def _category_must_be_known(cls, v: Optional[str]) -> Optional[str]:
+        if v is not None and v not in ALLOWED_CATEGORIES:
+            raise ValueError(f"category={v!r} is not one of {sorted(ALLOWED_CATEGORIES)}")
         return v
 
     @field_validator("due")

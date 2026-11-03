@@ -1,0 +1,6 @@
+[
+  {"id": "ami_es2009c_closing-gold-1", "transcript_id": "ami_es2009c_closing", "task": "Work on the basic look and feel and design constraints before the prototype", "owner": null, "tool": "trello_task", "due": null, "attendees_or_recipients": [], "evidence_utterance_ids": ["u57"], "category": "pronoun_or_alias"},
+  {"id": "ami_es2009c_closing-gold-2", "transcript_id": "ami_es2009c_closing", "task": "Lay out the design with voice recognition and menu options", "owner": null, "tool": "trello_task", "due": null, "attendees_or_recipients": [], "evidence_utterance_ids": ["u57", "u59"], "category": "pronoun_or_alias"},
+  {"id": "ami_es2009c_closing-gold-3", "transcript_id": "ami_es2009c_closing", "task": "Check product evaluation with some pilots", "owner": null, "tool": "trello_task", "due": null, "attendees_or_recipients": [], "evidence_utterance_ids": ["u60"], "category": "ambiguous_escalate"},
+  {"id": "ami_es2009c_closing-gold-4", "transcript_id": "ami_es2009c_closing", "task": "Work together on making a prototype", "owner": null, "tool": "trello_task", "due": null, "attendees_or_recipients": [], "evidence_utterance_ids": ["u60"], "category": "ambiguous_escalate"}
+]

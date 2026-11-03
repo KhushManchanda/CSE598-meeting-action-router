@@ -1,0 +1,16 @@
+{
+  "source_meeting": "TS3003b",
+  "source_corpus": "AMI Meeting Corpus, manual annotations v1.6.2 (CC BY 4.0)",
+  "source_url": "https://groups.inf.ed.ac.uk/ami/AMICorpusAnnotations/ami_public_manual_1.6.2.zip",
+  "meeting_date": "2004-10-11",
+  "utterance_range_in_full_transcript": [
+    359,
+    404
+  ],
+  "speaker_role_map": {
+    "A": "PM",
+    "C": "ID",
+    "B": "UI",
+    "D": "ME"
+  }
+}

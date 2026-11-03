@@ -20,7 +20,12 @@ not listed under "Done" is a TODO, not a claim.
 - [x] **Step 4 — Agent A: ledger, extractor, resolver (+ its tools),
       validator/critic, approval CLI, router, verifier, recovery,
       budget, audit log, JSON report. Run end to end on `test1.txt`.**
-- [ ] Step 5 — synthetic data, AMI excerpts, gold review CLI
+- [~] **Step 5 — partially done, see "Step 5" section below for exactly
+      what's finished vs. still TODO.** AMI excerpts (7, within the
+      5-8 target) and the gold review CLI/kappa/splits/annotation
+      guide are done; synthetic transcripts are at 8 of the ~15 target
+      (all required categories covered at least once, including the
+      prompt-injection case) — growing this is TODO, not abandoned.
 - [ ] Step 6 — eval runner + results tables
 - [ ] Step 7 — live Google Calendar / Trello adapters, one live run
 - [ ] Step 8 — ablations, full README, Mermaid architecture diagram
@@ -143,9 +148,57 @@ OpenAI client entirely (no network, no key, no cost) to test
     and latency. `run_agent.py` is the CLI (`--tools mock|live`,
     `--auto-approve`); `--tools live` raises `NotImplementedError` for
     now rather than silently acting like mock — that's step 7.
-- `tests/` — 178 unit tests, all passing (`pytest -q`). Every stage's
+- `tests/` — 199 unit tests, all passing (`pytest -q`). Every stage's
   tests run against a fake/scripted LLM client (deterministic, no
   cost); only the manual CLI runs noted below have made real API calls.
+
+## Step 5 — data, gold labels, review tooling
+
+**AMI Meeting Corpus excerpts — done, 7 of the 5-8 target.**
+Source: AMI's own manual-annotations download (CC BY 4.0) — full
+provenance, license, and license-compliance notes in
+`data/ami/ATTRIBUTION.md`. We do **not** vendor the 22MB annotation
+archive; `scripts/build_ami_excerpts.py` regenerates our 7 excerpts
+(or more) from a fresh download. Each excerpt is a real PM wrap-up
+segment (picked by scanning for action-cue density) where follow-up
+work gets assigned — genuinely messy real speech, which is exactly the
+texture our clean synthetic transcripts don't have. Speaker→role
+(PM/ID/UI/ME) mapping comes from AMI's own public metadata, not a
+guess. `data/ami/ATTRIBUTION.md` also discloses every judgment call
+made drafting gold for these (several PM assignments don't name who
+does what — left `owner: null` / `category: "ambiguous_escalate"`
+rather than guessed) and flags that 4 of the 7 excerpts contain a real
+participant's first name spoken mid-conversation (AMI's own
+transcription, not something we added).
+
+**Synthetic transcripts — 8 of the ~15 target, TODO to grow further.**
+`data/synthetic/<id>/{transcript.txt,roster.json,meta.json,NOTES.md}`
++ `data/gold_draft/<id>.json`. Every required category
+(`agent/schema.py:ALLOWED_CATEGORIES`) is exercised at least once,
+including the required prompt-injection transcript
+(`synth_prompt_injection_06` — see its `NOTES.md` for why that line
+must produce zero action items). Honest gap: spec's target was "start
+with about 15... grow to 20+"; 8 is a real start, not the full target
+— said plainly rather than rounded up.
+
+**Gold review workflow — done.** `data/ANNOTATION_GUIDE.md` defines
+the category vocabulary and the draft→review process.
+`scripts/review_gold.py` steps through `gold_draft/` items one at a
+time (accept/fix/skip), writing only reviewed items into `gold/` —
+**nothing has been auto-promoted**; every draft above is still
+sitting in `gold_draft/` pending an actual human review pass (ideally
+by whichever of Arjun/Khush didn't write that draft). `eval/kappa.py`
+computes Cohen's kappa on the owner field over a shared, id-matched
+subset, for whenever both of you label independently before
+reconciling. `data/splits.json` assigns `test1` + 5 synthetic
+transcripts to `dev`, everything else (3 synthetic + all 7 AMI) to
+held-out `test` — per the annotation guide, test-split transcripts are
+never to be tuned against.
+
+**Schema change**: `agent/schema.py:ActionItem` gained an optional
+`category` field (gold-only; predictions never set it), validated
+against `ALLOWED_CATEGORIES`, to carry the category tags the spec asks
+for.
 
 ## B1 vs B0 vs Agent A, on `test1.txt` (our gold, `data/gold/test1.json`)
 

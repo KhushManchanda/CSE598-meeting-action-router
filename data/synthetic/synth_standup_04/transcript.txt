@@ -1,0 +1,10 @@
+Daily Standup
+Alex: Morning, quick standup.
+Robin: I already pushed the hotfix for the login bug yesterday, it's live.
+Casey: I was thinking maybe we should eventually add more E2E tests, just an idea for later.
+Alex: If we had more time, I'd love to refactor the whole auth module, but that's not happening this sprint.
+Robin: No, I don't think we need to touch the payment service right now.
+Casey: One real thing: Casey will file the flaky-test report with a full breakdown by Monday.
+Alex: Thanks, and can everyone make sure to check in your branch changes before end of day?
+Robin: Will do.
+Alex: Great, that's standup.

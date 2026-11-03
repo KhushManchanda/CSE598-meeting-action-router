@@ -1,0 +1,5 @@
+[
+  {"name": "Harper", "aliases": [], "email": "harper@example.com", "trello_member_id": "member_harper"},
+  {"name": "Jamie", "aliases": [], "email": "jamie@example.com", "trello_member_id": "member_jamie"},
+  {"name": "Drew", "aliases": [], "email": "drew@example.com", "trello_member_id": "member_drew"}
+]

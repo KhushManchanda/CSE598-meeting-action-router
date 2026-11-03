@@ -45,3 +45,18 @@ def test_rejects_empty_task():
 def test_rejects_unknown_extra_field():
     with pytest.raises(ValidationError):
         ActionItem(id="t-1", transcript_id="t", task="x", unexpected_field="nope")
+
+
+def test_category_accepts_known_value():
+    item = ActionItem(id="t-1", transcript_id="t", task="x", category="ambiguous_escalate")
+    assert item.category == "ambiguous_escalate"
+
+
+def test_category_defaults_to_none():
+    item = ActionItem(id="t-1", transcript_id="t", task="x")
+    assert item.category is None
+
+
+def test_category_rejects_unknown_value():
+    with pytest.raises(ValidationError):
+        ActionItem(id="t-1", transcript_id="t", task="x", category="not_a_real_category")
