@@ -411,12 +411,12 @@ Priority order, combining this report's findings with `HANDOFF.md`:
    mock-tools path and its live-tools path with a human clicking
    through approve/edit/reject in the browser; no browser-automation
    tooling was available to do this from this session.
-7. **Grow the synthetic dataset** toward the originally-targeted
+6. **Grow the synthetic dataset** toward the originally-targeted
    15-20+ transcripts (currently 8) — optional, time-permitting, not
    blocking a credible preliminary evaluation.
-8. **Write `AGENTS.md`** if the contributor-rules reference in
+7. **Write `AGENTS.md`** if the contributor-rules reference in
    `HANDOFF.md` is meant to be a real, checked-in file.
-9. **Section 7 below** needs Khush/Arjun's own pass once the team
+8. **Section 7 below** needs Khush/Arjun's own pass once the team
    agrees how to characterize contributions for grading.
 
 ---
