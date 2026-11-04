@@ -7,6 +7,12 @@ baseline (B0) and a single-call LLM baseline (B1).
 
 For the current checkpoint, verification limits, stakeholder video plan,
 and prioritized Milestone 2 work, start with [HANDOFF.md](HANDOFF.md).
+For the actual draft Milestone 2 report (architecture, evaluation,
+case study, failure analysis, remaining work), see
+[MILESTONE2_REPORT.md](MILESTONE2_REPORT.md) — it is explicitly marked
+as a draft, not a finished submission. Architecture diagram:
+[docs/architecture.md](docs/architecture.md). Stakeholder video script
+(not yet recorded): [docs/stakeholder_video_script.md](docs/stakeholder_video_script.md).
 
 ## Current local verification — November 3, 2026
 
@@ -170,18 +176,32 @@ not listed under "Done" is a TODO, not a claim.
 - [x] **Step 4 — Agent A: ledger, extractor, resolver (+ its tools),
       validator/critic, approval CLI, router, verifier, recovery,
       budget, audit log, JSON report. Run end to end on `test1.txt`.**
-- [~] **Step 5 — partially done, see "Step 5" section below for exactly
-      what's finished vs. still TODO.** AMI excerpts (7, within the
-      5-8 target) and the gold review CLI/kappa/splits/annotation
-      guide are done; synthetic transcripts are at 8 of the ~15 target
-      (all required categories covered at least once, including the
-      prompt-injection case) — growing this is TODO, not abandoned.
+- [~] **Step 5 — partially done.** AMI excerpts (7, within the 5-8
+      target) and the gold review CLI/kappa/splits/annotation guide
+      are done; synthetic transcripts are at 8 of the ~15 target (all
+      required categories covered at least once, including the
+      prompt-injection case). As of 2026-11-03, **all 15 drafts have
+      been reviewed into `data/gold/`** — see
+      `data/ANNOTATION_GUIDE.md`'s provenance note: this review was
+      done by Claude re-checking every item against its transcript,
+      not yet by an independent second human on the team. Growing the
+      synthetic set further, and a genuine second-human review pass,
+      remain TODO.
 - [x] **Step 6 — eval runner (`eval/run_eval.py`), results tables
       (`eval/report.py`), ablation wiring (A-noval/A-norec), prompts
       externalized to `prompts/`. Run for real on the dev split; found
       and fixed two real crash bugs (see "Step 6" section below).**
-- [ ] Step 7 — live Google Calendar / Trello adapters, one live run
-- [ ] Step 8 — ablations, full README, Mermaid architecture diagram
+- [x] **Step 7 — live Google Calendar / Gmail / Trello, via Composio's
+      managed connection layer (`agent/tools/live_*.py`), real runs
+      against test accounts (Arjun) — see `HANDOFF.md` and
+      `MILESTONE2_REPORT.md` Section 4b for what's been verified live
+      vs. what still needs a fresh live re-check.**
+- [x] **Step 8 — ablations (done in step 6), Mermaid architecture
+      diagram (`docs/architecture.md`), this README. One substantive
+      orchestrator bug fixed this pass: execution-time invalid-argument
+      failures now route back to the resolver per spec, instead of
+      escalating like every other failure — see
+      `MILESTONE2_REPORT.md` Section 5.**
 
 ## Setup
 
