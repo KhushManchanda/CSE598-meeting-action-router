@@ -25,6 +25,10 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
+from dotenv import load_dotenv  # noqa: E402
+
+load_dotenv()
+
 from agent.tools.composio_client import get_client, get_user_id  # noqa: E402
 
 

@@ -151,7 +151,19 @@ def score(predictions: list[ActionItem], gold: list[ActionItem]) -> dict:
     tp, fp, fn = len(matched), len(extras), len(missed_gold)
     precision = tp / (tp + fp) if (tp + fp) else None
     recall = tp / (tp + fn) if (tp + fn) else None
-    f1 = (2 * precision * recall / (precision + recall)) if precision and recall else None
+    # `if precision and recall` is wrong here: 0.0 is a legitimate value
+    # (tp=0 with fp>0 or fn>0, a real failure) but is falsy in Python, so
+    # that check silently turned a real 0% F1 into a missing "None" --
+    # found while preparing results for sponsor review. None is reserved
+    # for precision/recall themselves being undefined (no predictions
+    # and no gold at all); the 0+0 case is the standard F1 convention
+    # (harmonic mean of 0 and anything is 0, not undefined).
+    if precision is None or recall is None:
+        f1 = None
+    elif precision == 0.0 and recall == 0.0:
+        f1 = 0.0
+    else:
+        f1 = 2 * precision * recall / (precision + recall)
 
     owner_correct = sum(1 for m in matched if _normalize(m.pred.owner) == _normalize(m.gold.owner))
     tool_correct = sum(1 for m in matched if _normalize(m.pred.tool) == _normalize(m.gold.tool))

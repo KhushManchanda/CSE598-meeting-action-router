@@ -55,6 +55,7 @@ from agent.validator import validate
 from agent.verifier import VerifyOutcome, execute_with_recovery
 
 MAX_REPAIR_ATTEMPTS = 2
+MAX_EXECUTION_REPAIR_ATTEMPTS = 2
 DEFAULT_BUDGET = 40
 
 
@@ -192,6 +193,93 @@ def _execute_once_no_recovery(resolved_item, resolved_action, roster, tools, ide
     return VerifyOutcome(verified=True, outcome="verified", created_object=created, attempts=1)
 
 
+@dataclass
+class ExecutionResult:
+    status: str  # "executed" | "budget_exhausted"
+    outcome: Optional[VerifyOutcome] = None  # set when status == "executed"; .outcome is "verified" or "escalate"
+    resolved_item: Any = None
+    resolved_action: Any = None
+
+
+def _execute_with_resolver_repair(
+    candidate, resolved_item, resolved_action, meeting_date, roster, utterances, transcript_text,
+    ledger, action_id, audit_log, meeting_id, llm_client, report, tools, meeting_id_for_idem, budget,
+    enable_recovery=True, max_execution_repair_attempts=MAX_EXECUTION_REPAIR_ATTEMPTS,
+) -> ExecutionResult:
+    """Spec: verifier failures route by type -- 'Retry transient errors...
+    Send invalid-argument errors back to the resolver. Send expired auth
+    or an exhausted budget to manual review.' agent/verifier.py already
+    retries transient errors and reports InvalidArgumentError as
+    outcome='needs_resolver_repair' -- but until now nothing ever acted
+    on that distinction: the orchestrator escalated it exactly like any
+    other failure (found while reviewing the project for sponsor
+    feedback). This closes that gap: on needs_resolver_repair, re-resolve
+    with the execution error as feedback, re-validate the result, and
+    retry execution -- bounded, then escalate if still stuck, mirroring
+    the validator's own pre-approval repair loop (agent/ledger.py's
+    repair_attempts counter is shared with that loop, since both count
+    the same thing: how many times this action needed a second look).
+    No re-approval: this repairs a technical/format problem the verifier
+    caught, not a semantic change a human needs to review again -- same
+    reasoning as why the validator's OWN repair loop runs before human
+    approval, not after.
+    """
+    attempt = 0
+    while True:
+        if report.tool_calls_used >= budget:
+            return ExecutionResult(status="budget_exhausted")
+
+        idem_key = idempotency_key(meeting_id_for_idem, action_id)
+        ledger.set_idempotency_key(action_id, idem_key)
+        if enable_recovery:
+            outcome = execute_with_recovery(resolved_item, resolved_action, roster, tools, idem_key)
+        else:
+            outcome = _execute_once_no_recovery(resolved_item, resolved_action, roster, tools, idem_key)
+        report.tool_calls_used += outcome.attempts
+
+        ledger.record_execution_attempt(action_id, success=outcome.verified, created_object=outcome.created_object, error=outcome.error)
+        audit_log.log_tool_call(
+            meeting_id, action_id, "router", resolved_item.tool, {}, idem_key,
+            success=outcome.verified, result=outcome.created_object, error=outcome.error,
+        )
+
+        if outcome.outcome != "needs_resolver_repair" or attempt >= max_execution_repair_attempts:
+            return ExecutionResult(status="executed", outcome=outcome, resolved_item=resolved_item, resolved_action=resolved_action)
+
+        attempt += 1
+        ledger.increment_repair_attempt(action_id)
+        audit_log.log_decision(
+            meeting_id, action_id, "verifier", "execution_repair_requested",
+            {"error": outcome.error, "attempt": attempt},
+        )
+
+        resolved_action = resolve(
+            candidate, meeting_date, roster, utterances, llm_client=llm_client,
+            repair_feedback=f"The previous attempt to execute this failed: {outcome.error}",
+        )
+        for llm_call in resolved_action.llm_calls:
+            audit_log.log_model_call(meeting_id, action_id, "resolver", llm_call)
+            report.total_cost_usd += llm_call.cost_usd or 0.0
+        ledger.set_resolved(action_id, resolved_action.owner, resolved_action.due, resolved_action.tool, resolved_action.attendees_or_recipients)
+
+        validation = validate(candidate, resolved_action, meeting_date, roster, transcript_text, llm_client=llm_client)
+        if validation.grounding_llm_call is not None:
+            audit_log.log_model_call(meeting_id, action_id, "validator_grounding", validation.grounding_llm_call)
+            report.total_cost_usd += validation.grounding_llm_call.cost_usd or 0.0
+        ledger.set_validation_result(action_id, validation.errors)
+
+        if not validation.passed:
+            escalate_outcome = VerifyOutcome(
+                verified=False, outcome="escalate",
+                error=f"execution repair's re-resolution failed re-validation: {validation.errors}",
+            )
+            return ExecutionResult(status="executed", outcome=escalate_outcome, resolved_item=resolved_item, resolved_action=resolved_action)
+
+        resolved_item = validation.resolved_item.model_copy(update={"id": action_id, "transcript_id": meeting_id})
+        ledger.mark_approved_after_revalidation(action_id)
+        # loop back: re-check budget, retry execution with the repaired item
+
+
 def _append_existing_to_report(report: RunReport, record) -> None:
     report.skipped_already_done.append({"id": record.id, "state": record.state, "task": record.task})
     if record.state == ledger_module.VERIFIED:
@@ -290,20 +378,19 @@ def run_meeting(
                 report.budget_exhausted_remaining.append(action_id)
                 continue
 
-            idem_key = idempotency_key(meeting_id, action_id)
-            ledger.set_idempotency_key(action_id, idem_key)
             resolved_action_for_router = resolved_action if decision.decision != "edited" else _resolved_action_from_item(resolved_item, edited_description)
-            if enable_recovery:
-                outcome = execute_with_recovery(resolved_item, resolved_action_for_router, roster, tools, idem_key)
-            else:
-                outcome = _execute_once_no_recovery(resolved_item, resolved_action_for_router, roster, tools, idem_key)
-            report.tool_calls_used += outcome.attempts
-
-            ledger.record_execution_attempt(action_id, success=outcome.verified, created_object=outcome.created_object, error=outcome.error)
-            audit_log.log_tool_call(
-                meeting_id, action_id, "router", resolved_item.tool, {}, idem_key,
-                success=outcome.verified, result=outcome.created_object, error=outcome.error,
+            execution = _execute_with_resolver_repair(
+                candidate, resolved_item, resolved_action_for_router, meeting_date, roster, utterances, transcript_text,
+                ledger, action_id, audit_log, meeting_id, llm_client, report, tools, meeting_id, budget,
+                enable_recovery=enable_recovery,
             )
+
+            if execution.status == "budget_exhausted":
+                ledger.escalate(action_id, "budget exhausted (max tool calls per meeting reached)")
+                report.budget_exhausted_remaining.append(action_id)
+                continue
+
+            outcome, resolved_item = execution.outcome, execution.resolved_item
 
             if outcome.outcome == "verified":
                 ledger.set_verified(action_id, True)

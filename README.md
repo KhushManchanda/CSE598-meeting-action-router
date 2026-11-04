@@ -58,10 +58,11 @@ through Python and only with permission to access local configuration.
 `scripts/inspect_google_tools.py` prints the pinned Google input schemas.
 Auth configs and active account connections are distinct; live accounts must
 be connected under the same `COMPOSIO_USER_ID` used by execution.
-`scripts/composio_connect.py` currently needs `.env` loaded by a wrapper:
+`scripts/composio_connect.py` now calls `load_dotenv()` itself (fixed --
+it used to need a manual wrapper; that workaround is no longer necessary):
 
 ```bash
-python -c 'from dotenv import load_dotenv; load_dotenv(".env"); from scripts.composio_connect import main; main()' --toolkit TRELLO
+python scripts/composio_connect.py --toolkit TRELLO
 ```
 
 Repeat with GOOGLECALENDAR or GMAIL as needed and complete the browser

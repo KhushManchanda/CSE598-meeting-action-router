@@ -145,3 +145,20 @@ def test_run_eval_transcript_without_gold_still_generates_predictions(tmp_path):
     run = results["synth_eng_sync_01"]["a"][0]
     assert run["score"] is None  # no reviewed gold yet for this transcript
     assert isinstance(run["predictions"], list)  # predictions were still generated
+
+
+def test_run_eval_scores_a_transcript_with_legitimately_empty_reviewed_gold(tmp_path, monkeypatch):
+    # Regression: `if gold else None` treated a reviewed-but-empty gold
+    # list (a transcript with zero real action items) the same as "not
+    # reviewed yet" and silently skipped scoring it.
+    import eval.run_eval as run_eval_module
+
+    monkeypatch.setattr(run_eval_module, "load_gold", lambda transcript_id: [])
+
+    results = run_eval(
+        transcript_ids=["synth_eng_sync_01"], systems=["a"], out_dir=tmp_path / "run_empty_gold",
+        llm_client=_OneCandidateScriptedClient(),
+    )
+    run = results["synth_eng_sync_01"]["a"][0]
+    assert run["score"] is not None
+    assert run["score"]["n_gold"] == 0

@@ -188,7 +188,12 @@ def run_eval(
             runs = []
             for run_idx in range(n_runs):
                 run_result = run_system(system, bundle, llm_client=llm_client)
-                scored = score_predictions([ActionItem(**p) for p in run_result.predictions], gold) if gold else None
+                # `is not None`, not truthiness: a transcript whose reviewed
+                # gold is legitimately an empty list (zero real action items)
+                # must still be scored as "0 gold items", not silently treated
+                # the same as "not reviewed yet" -- same class of bug as
+                # eval/score.py's f1 fix above, found at the same time.
+                scored = score_predictions([ActionItem(**p) for p in run_result.predictions], gold) if gold is not None else None
                 run_dict = {**asdict(run_result), "score": scored}
                 runs.append(run_dict)
 

@@ -317,3 +317,138 @@ def test_a_norec_combined_with_calendar_due_none_escalates_not_crashes():
     )
     assert report.verified == []
     assert len(report.escalated) == 1
+
+
+def test_execution_invalid_argument_goes_back_to_resolver_and_then_succeeds():
+    """Spec: 'Send invalid-argument errors back to the resolver.' Fault-
+    inject a single invalid_argument on the real tool backend (something
+    the validator can't catch, since the resolved item is otherwise
+    perfectly valid -- this is specifically an execution-time failure).
+    The orchestrator must re-resolve, re-validate, and retry -- not
+    escalate immediately."""
+    resolver_calls = {"n": 0}
+
+    def resolver_fn(messages):
+        resolver_calls["n"] += 1
+        return _finalize_result(owner="Marcus", tool="trello_task", task_text="Draft release notes", due="2026-09-04")
+
+    client = _ScriptedLLMClient(_extraction_result(ONE_CANDIDATE), resolver_fn=resolver_fn)
+    tools = _tools()
+    idem_key = idempotency_key("t1", "t1-1")
+    tools["trello"].set_fault_plan(idem_key, ["invalid_argument"])
+
+    report = run_meeting(
+        TRANSCRIPT, MEETING_DATE, ROSTER, tools, "t1",
+        ledger=Ledger(":memory:"), llm_client=client, auto_approve=True, print_fn=lambda s: None,
+    )
+
+    assert len(report.verified) == 1
+    assert report.escalated == []
+    assert resolver_calls["n"] == 2  # one initial resolve + one execution-repair re-resolve
+    assert len(tools["trello"].all_objects()) == 1  # no duplicate from the retry
+
+
+def test_execution_invalid_argument_exhausts_repair_attempts_and_escalates():
+    """Every attempt keeps hitting invalid_argument -- after
+    MAX_EXECUTION_REPAIR_ATTEMPTS, this must escalate, not loop forever
+    or silently drop the item."""
+    client = _ScriptedLLMClient(
+        _extraction_result(ONE_CANDIDATE),
+        resolver_fn=lambda m: _finalize_result(owner="Marcus", tool="trello_task", task_text="Draft release notes", due="2026-09-04"),
+    )
+    tools = _tools()
+    idem_key = idempotency_key("t1", "t1-1")
+    tools["trello"].set_fault_plan(idem_key, ["invalid_argument", "invalid_argument", "invalid_argument", "invalid_argument"])
+
+    report = run_meeting(
+        TRANSCRIPT, MEETING_DATE, ROSTER, tools, "t1",
+        ledger=Ledger(":memory:"), llm_client=client, auto_approve=True, print_fn=lambda s: None,
+    )
+
+    assert report.verified == []
+    assert len(report.escalated) == 1
+    assert "invalid_argument" in report.escalated[0]["reason"].lower() or "invalid argument" in report.escalated[0]["reason"].lower()
+
+
+def test_execution_repair_reresolution_failing_validation_escalates_with_clear_reason():
+    """If the re-resolution triggered by an execution failure comes back
+    with something the validator rejects (e.g. an owner not in the
+    roster), that must escalate with a reason distinguishing it from a
+    plain execution failure -- not retry execution with bad data."""
+    attempts = {"n": 0}
+
+    def resolver_fn(messages):
+        attempts["n"] += 1
+        if attempts["n"] == 1:
+            return _finalize_result(owner="Marcus", tool="trello_task", task_text="Draft release notes", due="2026-09-04")
+        return _finalize_result(owner="Nobody", tool="trello_task", task_text="Draft release notes", due="2026-09-04")
+
+    client = _ScriptedLLMClient(_extraction_result(ONE_CANDIDATE), resolver_fn=resolver_fn)
+    tools = _tools()
+    idem_key = idempotency_key("t1", "t1-1")
+    tools["trello"].set_fault_plan(idem_key, ["invalid_argument"])
+
+    report = run_meeting(
+        TRANSCRIPT, MEETING_DATE, ROSTER, tools, "t1",
+        ledger=Ledger(":memory:"), llm_client=client, auto_approve=True, print_fn=lambda s: None,
+    )
+
+    assert report.verified == []
+    assert len(report.escalated) == 1
+    assert "re-validation" in report.escalated[0]["reason"]
+
+
+def test_execution_repair_does_not_require_renewed_human_approval():
+    """The repair-and-retry on an execution failure must not re-prompt
+    the human -- auto_approve=False here, with a scripted input_fn that
+    only ever answers the FIRST approval prompt; if the orchestrator
+    tried to re-approve after the execution repair, input_fn would be
+    called a second time and raise."""
+    resolver_fn_state = {"n": 0}
+
+    def resolver_fn(messages):
+        resolver_fn_state["n"] += 1
+        return _finalize_result(owner="Marcus", tool="trello_task", task_text="Draft release notes", due="2026-09-04")
+
+    client = _ScriptedLLMClient(_extraction_result(ONE_CANDIDATE), resolver_fn=resolver_fn)
+    tools = _tools()
+    idem_key = idempotency_key("t1", "t1-1")
+    tools["trello"].set_fault_plan(idem_key, ["invalid_argument"])
+
+    approval_prompts = {"n": 0}
+
+    def input_fn(prompt):
+        approval_prompts["n"] += 1
+        if approval_prompts["n"] > 1:
+            raise AssertionError("human was asked to approve a second time during execution repair")
+        return "a"
+
+    report = run_meeting(
+        TRANSCRIPT, MEETING_DATE, ROSTER, tools, "t1",
+        ledger=Ledger(":memory:"), llm_client=client, auto_approve=False, input_fn=input_fn, print_fn=lambda s: None,
+    )
+
+    assert len(report.verified) == 1
+    assert approval_prompts["n"] == 1
+
+
+def test_execution_repair_respects_remaining_budget():
+    """A budget that's already exhausted by the time an execution-repair
+    retry would fire must escalate as 'budget exhausted', not keep
+    retrying past the cap."""
+    client = _ScriptedLLMClient(
+        _extraction_result(ONE_CANDIDATE),
+        resolver_fn=lambda m: _finalize_result(owner="Marcus", tool="trello_task", task_text="Draft release notes", due="2026-09-04"),
+    )
+    tools = _tools()
+    idem_key = idempotency_key("t1", "t1-1")
+    tools["trello"].set_fault_plan(idem_key, ["invalid_argument"])
+
+    report = run_meeting(
+        TRANSCRIPT, MEETING_DATE, ROSTER, tools, "t1",
+        ledger=Ledger(":memory:"), llm_client=client, auto_approve=True, budget=1, print_fn=lambda s: None,
+    )
+
+    assert report.verified == []
+    assert len(report.budget_exhausted_remaining) == 1
+    assert report.escalated == []

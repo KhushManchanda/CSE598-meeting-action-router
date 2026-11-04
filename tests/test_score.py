@@ -67,3 +67,24 @@ def test_full_score_matched_metrics_on_our_gold(b0_predictions):
     assert result["false_negatives"] == 0
     assert result["recall"] == pytest.approx(1.0)
     assert result["precision"] == pytest.approx(6 / 7)
+
+
+def test_f1_is_zero_not_none_when_precision_is_zero():
+    # Regression: `if precision and recall` treated a real 0.0 (tp=0,
+    # fp>0 -- predictions exist but none match gold) as "undefined" and
+    # returned None instead of the correct F1=0.0. Found while
+    # preparing results for sponsor review.
+    from agent.schema import ActionItem
+
+    pred = ActionItem(id="p1", transcript_id="t", task="totally unrelated", owner="Nobody", evidence_utterance_ids=["u99"])
+    gold_item = ActionItem(id="g1", transcript_id="t", task="Schedule a demo", owner="Marcus", evidence_utterance_ids=["u3"])
+    result = score([pred], [gold_item])
+    assert result["precision"] == 0.0
+    assert result["f1"] == 0.0
+
+
+def test_f1_is_none_when_no_predictions_and_no_gold():
+    result = score([], [])
+    assert result["precision"] is None
+    assert result["recall"] is None
+    assert result["f1"] is None
