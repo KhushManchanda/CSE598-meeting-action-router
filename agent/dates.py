@@ -43,6 +43,19 @@ _AMBIGUOUS_PATTERNS = [
     re.compile(r"^\s*eventually\s*$", re.IGNORECASE),
 ]
 
+# "end of day"/"EOD"/"this afternoon"/"tonight"/etc. all mean "the same
+# calendar day as the meeting" -- common real meeting phrases that
+# dateparser does not recognize on its own (confirmed: every one of
+# these returns None from dateparser directly), so without this rule a
+# perfectly resolvable same-day deadline would wrongly fall back to
+# "ambiguous, don't guess". Found while reviewing gold labels for
+# sponsor review (synth_standup_04's "before end of day",
+# synth_marketing_02's "this afternoon").
+_SAME_DAY_RE = re.compile(
+    r"\bend of (the )?day\b|\beod\b|\bthis (morning|afternoon|evening)\b|\btonight\b|\blater today\b",
+    re.IGNORECASE,
+)
+
 
 def resolve_date(expression: str, meeting_date: str, timezone: str = "UTC") -> Optional[str]:
     """Returns an ISO-8601 date string on or after meeting_date, or None
@@ -56,6 +69,9 @@ def resolve_date(expression: str, meeting_date: str, timezone: str = "UTC") -> O
         return None
 
     base = date.fromisoformat(meeting_date)
+
+    if _SAME_DAY_RE.search(text):
+        return base.isoformat()
 
     weekday_match = _WEEKDAY_RE.search(text)
     if weekday_match:

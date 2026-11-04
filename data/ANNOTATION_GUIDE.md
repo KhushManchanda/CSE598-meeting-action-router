@@ -66,6 +66,32 @@ record them in the transcript's own notes (see
 so recall/precision scoring and manual review both know it was
 deliberate, not missed.
 
+## Review provenance (important — read before citing these numbers)
+
+As of 2026-11-03, all 15 `gold_draft/` transcripts (8 synthetic + 7
+AMI) have been promoted into `data/gold/` via `scripts/review_gold.py`
+(51 items total, alongside the pre-existing 6-item `test1.json`).
+**This review was done by Claude (an AI), re-reading every item
+against its transcript, not by an independent second human** (Arjun or
+Khush) as this guide otherwise recommends. The review was real, not a
+rubber-stamp — it found and fixed concrete errors (see
+`data/synthetic/synth_marketing_02/NOTES.md`,
+`data/synthetic/synth_vendor_call_05/NOTES.md`, and
+`data/ami/ATTRIBUTION.md` for exactly what changed and why), and it
+fixed a real resolver bug in `agent/dates.py` ("end of day"/"this
+afternoon" and similar same-day phrases were previously unresolvable).
+
+This is disclosed, not hidden, per this project's "never fabricate /
+always say what's uncertain" rule: **treat these 51 items as a solid
+first pass, not a methodologically independent ground truth.** A
+genuine second human reviewer (ideally whichever of Arjun/Khush didn't
+draft a given transcript) going through `scripts/review_gold.py`
+again, re-checking the judgment calls flagged in the notes above, is
+still the right next step before these numbers go into anything that
+depends on them being unimpeachable (e.g. a publication). For a
+sponsor preview of where the project stands, they're real, checked
+numbers — just not yet independently human-reviewed.
+
 ## Dev vs. test split
 
 `data/splits.json` lists which transcript_ids are in `dev` (safe to

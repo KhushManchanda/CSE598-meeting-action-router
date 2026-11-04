@@ -1,0 +1,57 @@
+[
+  {
+    "id": "ami_es2011c_closing-gold-1",
+    "transcript_id": "ami_es2011c_closing",
+    "task": "Work on the look and feel of the design",
+    "owner": null,
+    "tool": "trello_task",
+    "due": null,
+    "attendees_or_recipients": [],
+    "evidence_utterance_ids": [
+      "u52",
+      "u53"
+    ],
+    "category": "ambiguous_escalate"
+  },
+  {
+    "id": "ami_es2011c_closing-gold-2",
+    "transcript_id": "ami_es2011c_closing",
+    "task": "Work on user interface design",
+    "owner": null,
+    "tool": "trello_task",
+    "due": null,
+    "attendees_or_recipients": [],
+    "evidence_utterance_ids": [
+      "u52",
+      "u53"
+    ],
+    "category": "ambiguous_escalate"
+  },
+  {
+    "id": "ami_es2011c_closing-gold-3",
+    "transcript_id": "ami_es2011c_closing",
+    "task": "Do product evaluation",
+    "owner": "Marketing Expert",
+    "tool": "trello_task",
+    "due": null,
+    "attendees_or_recipients": [],
+    "evidence_utterance_ids": [
+      "u53",
+      "u55"
+    ],
+    "category": "multi_turn_delegation"
+  },
+  {
+    "id": "ami_es2011c_closing-gold-4",
+    "transcript_id": "ami_es2011c_closing",
+    "task": "Play with play-dough together on a prototype",
+    "owner": null,
+    "tool": "trello_task",
+    "due": null,
+    "attendees_or_recipients": [],
+    "evidence_utterance_ids": [
+      "u52"
+    ],
+    "category": "ambiguous_escalate"
+  }
+]

@@ -1,0 +1,44 @@
+[
+  {
+    "id": "synth_ops_review_07-gold-1",
+    "transcript_id": "synth_ops_review_07",
+    "task": "Document the failover steps in the runbook",
+    "owner": "Sam",
+    "tool": "trello_task",
+    "due": "2026-11-03",
+    "attendees_or_recipients": [],
+    "evidence_utterance_ids": [
+      "u3",
+      "u4",
+      "u5"
+    ],
+    "category": "pronoun_or_alias"
+  },
+  {
+    "id": "synth_ops_review_07-gold-2",
+    "transcript_id": "synth_ops_review_07",
+    "task": "Rotate the exposed API keys",
+    "owner": "Riley",
+    "tool": "trello_task",
+    "due": "2026-10-27",
+    "attendees_or_recipients": [],
+    "evidence_utterance_ids": [
+      "u6"
+    ],
+    "category": "baseline"
+  },
+  {
+    "id": "synth_ops_review_07-gold-3",
+    "transcript_id": "synth_ops_review_07",
+    "task": "Schedule a retro meeting with the whole team",
+    "owner": "Taylor",
+    "tool": "calendar_event",
+    "due": "2026-10-29",
+    "attendees_or_recipients": [],
+    "evidence_utterance_ids": [
+      "u7",
+      "u8"
+    ],
+    "category": "pronoun_or_alias"
+  }
+]

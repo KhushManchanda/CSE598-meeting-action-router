@@ -2,7 +2,8 @@
   {
     "name": "Marketing Expert",
     "aliases": [
-      "ME"
+      "ME",
+      "Florent"
     ],
     "email": "marketing.expert@example.com",
     "trello_member_id": "member_me"

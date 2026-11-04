@@ -36,8 +36,11 @@ def test_load_gold_returns_items_when_reviewed():
 
 
 def test_load_gold_returns_none_when_not_yet_reviewed():
-    # synth_eng_sync_01 only has a gold_draft, nothing in data/gold/ yet.
-    assert load_gold("synth_eng_sync_01") is None
+    # All 15 step-5 drafts are now reviewed into data/gold/ (2026-11-03),
+    # so this uses a transcript_id that has never existed at all, rather
+    # than depending on some real transcript staying permanently
+    # unreviewed just to keep this test's fixture true.
+    assert load_gold("definitely_not_a_real_transcript_id") is None
 
 
 def test_load_split_dev_and_test():

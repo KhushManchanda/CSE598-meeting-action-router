@@ -59,39 +59,56 @@ Jordan"). This is how AMI recorded and transcribed these sessions; we
 are surfacing it, not introducing it. If this is a concern for wider
 distribution, these are the 4 files to redact — ask and we will.
 
-## Gold-labeling judgment calls (gold_draft/, pending review)
+## Gold-labeling judgment calls (reviewed — see data/gold/ and data/ANNOTATION_GUIDE.md)
 
 Several PM wrap-up utterances assign tasks like "look and feel design,
 user interface design, product evaluation" to "you each" / "you two"
 **without** naming which role does which. We did **not** guess: any
-owner that isn't explicitly stated (by role title, or by a first name
-we could confidently map) is left `owner: null` with
-`category: "ambiguous_escalate"` — consistent with this project's
-"don't guess, escalate" policy (see `data/gold/test1.NOTES.md` for the
-same principle applied to B0).
+owner that isn't explicitly stated (by role title, or resolved below)
+is left `owner: null` with `category: "ambiguous_escalate"` —
+consistent with this project's "don't guess, escalate" policy (see
+`data/gold/test1.NOTES.md` for the same principle applied to B0).
 
-Where a first name is used (Nathan/Ron/Florent/Baba/David Jordan), we
-did not confidently map it to a role either — those are tagged
-`category: "pronoun_or_alias"` with `owner: null`, since resolving them
-requires either audio/video (not available to us) or an elimination
-argument from the roles already assigned elsewhere in the same
-utterance (not a certainty). Reviewers with more context should feel
-free to fill in a confident owner during gold review — that's what
-`gold_draft/` → `gold/` review is for.
+Where a first name is used (Nathan/Ron/Florent/Baba/David Jordan),
+resolving it to a role needed one of two kinds of argument — and only
+one kind survived review as something we're willing to call "not a
+guess":
 
-Content-based (not certain) guesses, left out of the JSON itself but
-recorded here for whoever reviews these:
-- `ami_es2009c_closing`: "Nathan" is plausibly the Industrial Designer
-  (assigned "basic look and feel"), "Ron" plausibly the User Interface
-  Designer (assigned menu/layout work) — **our** roster.json for this
-  excerpt adds these as aliases under that guess; revisit on review.
-- `ami_is1003b_closing`: "Florent" is plausibly the Marketing Expert,
-  by elimination (ID and UI are explicitly assigned elsewhere in the
-  same utterance, PM is the speaker, leaving ME as the only
-  unaccounted-for role).
-- `ami_is1003c_closing`: "Baba" and "David Jordan" are plausibly the
-  Industrial Designer and User Interface Designer (the usual pair
-  assigned the clay-prototype task in this scenario), in unknown order.
+- **Pure elimination** (kept, treated as resolved): the transcript
+  itself, combined with the known closed set of 4 roles, forces a
+  unique answer with no appeal to outside knowledge. `ami_is1003b_closing`'s
+  "Florent" (u65-66) is this case: in the same utterance (u60), PM has
+  already explicitly named the Industrial Designer and the User
+  Interface Designer for their own tasks; PM (the speaker) isn't
+  addressing themselves; that leaves exactly one role (Marketing
+  Expert) for exactly one remaining name. Added "Florent" as a roster
+  alias for Marketing Expert and set
+  `ami_is1003b_closing-gold-3`'s owner accordingly.
+- **Content-based convention** (rejected, left unresolved): matching a
+  name to a role via what the TASK CONTENT typically implies (e.g.
+  "look and feel" sounds like Industrial-Designer work, by general
+  convention in this AMI scenario family) is reasoning from outside
+  the transcript, not from it — exactly the kind of guess this
+  project's "don't guess" policy exists to prevent. Two cases were
+  originally drafted this way and were corrected on review:
+  - `ami_es2009c_closing`'s "Nathan"/"Ron" (u57-59): originally guessed
+    as Industrial Designer / User Interface Designer by task-content
+    convention, with roster.json aliases added to match. The aliases
+    created a real, found inconsistency: a system correctly using our
+    own `lookup_participant` tool would have resolved "Nathan" and been
+    scored WRONG against a gold that said `owner: null`. Fixed by
+    removing both aliases from `ami_es2009c_closing/roster.json`;
+    `owner: null` / `category: "pronoun_or_alias"` stands, now
+    consistent with what the roster can actually resolve.
+  - `ami_is1003c_closing`'s "Baba"/"David Jordan" (u48, u61): two names
+    need mapping to 2 of 3 remaining roles (ID/UI/ME), which is not a
+    forced 1:1 elimination the way Florent's single name/single role
+    case was — matching them specifically to {ID, UI} (the pair that
+    usually builds the clay prototype in this scenario) is the same
+    convention-based guess as Nathan/Ron. `owner: null` stands.
+
+This distinction — internal logical necessity vs. external convention,
+however plausible — is the dividing line used throughout review.
 
 This item (one person, one task, two possible names, unknown order) is
 also a real example of a genuinely **multi-owner** action that our

@@ -44,3 +44,17 @@ def test_never_returns_a_date_before_the_meeting_date():
     if result is not None:
         from datetime import date
         assert date.fromisoformat(result) >= date.fromisoformat(MEETING_DATE)
+
+
+def test_end_of_day_resolves_to_the_meeting_date():
+    # Found while reviewing gold labels for sponsor review: a common
+    # real phrase ("before end of day") was previously unresolvable.
+    assert resolve_date("end of day", MEETING_DATE) == MEETING_DATE
+    assert resolve_date("EOD", MEETING_DATE) == MEETING_DATE
+    assert resolve_date("by end of the day", MEETING_DATE) == MEETING_DATE
+    assert resolve_date("before end of day", MEETING_DATE) == MEETING_DATE
+
+
+def test_other_same_day_phrasings_resolve_to_the_meeting_date():
+    for expr in ["this afternoon", "this morning", "this evening", "tonight", "later today"]:
+        assert resolve_date(expr, MEETING_DATE) == MEETING_DATE

@@ -10,8 +10,7 @@
   {
     "name": "Industrial Designer",
     "aliases": [
-      "ID",
-      "Nathan"
+      "ID"
     ],
     "email": "industrial.designer@example.com",
     "trello_member_id": "member_id"
@@ -19,8 +18,7 @@
   {
     "name": "User Interface Designer",
     "aliases": [
-      "UI",
-      "Ron"
+      "UI"
     ],
     "email": "user.interface.designer@example.com",
     "trello_member_id": "member_ui"

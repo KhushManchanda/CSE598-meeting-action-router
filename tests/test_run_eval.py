@@ -137,7 +137,14 @@ def test_run_eval_repeat_subset_runs_multiple_times(tmp_path):
     assert (pred_dir / "test1_2.json").exists()
 
 
-def test_run_eval_transcript_without_gold_still_generates_predictions(tmp_path):
+def test_run_eval_transcript_without_gold_still_generates_predictions(tmp_path, monkeypatch):
+    # All 15 step-5 drafts are now reviewed into data/gold/ (2026-11-03),
+    # so "no gold yet" is simulated here rather than relying on some
+    # real transcript staying permanently unreviewed.
+    import eval.run_eval as run_eval_module
+
+    monkeypatch.setattr(run_eval_module, "load_gold", lambda transcript_id: None)
+
     results = run_eval(
         transcript_ids=["synth_eng_sync_01"], systems=["a"], out_dir=tmp_path / "run3",
         llm_client=_OneCandidateScriptedClient(),

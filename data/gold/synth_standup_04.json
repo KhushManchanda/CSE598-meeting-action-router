@@ -1,0 +1,29 @@
+[
+  {
+    "id": "synth_standup_04-gold-1",
+    "transcript_id": "synth_standup_04",
+    "task": "File the flaky-test report with a full breakdown",
+    "owner": "Casey",
+    "tool": "trello_task",
+    "due": "2026-10-19",
+    "attendees_or_recipients": [],
+    "evidence_utterance_ids": [
+      "u6"
+    ],
+    "category": "baseline"
+  },
+  {
+    "id": "synth_standup_04-gold-2",
+    "transcript_id": "synth_standup_04",
+    "task": "Check in branch changes before end of day",
+    "owner": null,
+    "tool": "trello_task",
+    "due": "2026-10-15",
+    "attendees_or_recipients": [],
+    "evidence_utterance_ids": [
+      "u7",
+      "u8"
+    ],
+    "category": "ambiguous_escalate"
+  }
+]
