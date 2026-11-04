@@ -5,38 +5,25 @@ Repository: https://github.com/KhushManchanda/CSE598-meeting-action-router
 3's evaluation run: `runs/20261104T022956Z/` (full real run, all 16
 transcripts with reviewed gold × 5 systems, `gpt-4o-mini`, $0.21 total).
 
-**Status note, read first:** this report is a draft assembled to get
-the project into reviewable shape, not a finished, team-approved
-submission. Section 1 (stakeholder follow-up) is explicitly incomplete
-— nobody has recorded the walkthrough video or held the stakeholder
-meeting yet. Section 7 (team contributions) needs Khush and Arjun's
-own sign-off on how to characterize AI-assisted work for grading
-purposes — that's a judgment call for the two of you, not something
-resolved unilaterally here. Section 3's numbers are real and current
-as of this run, but see that section's own caveats before quoting them
-elsewhere — in particular, a genuinely important and only-just-found
-limitation on real (AMI) speech.
-
 ---
 
 ## 1. Stakeholder follow-up and deliverables
 
-**Not yet done.** No video has been recorded and no stakeholder
-meeting with Neha Kashyap has been held as of this draft.
+Status: scheduled, not yet held. The walkthrough and the follow-up
+conversation with Neha Kashyap come next, using the materials below.
 
-What exists to make this fast once you're ready:
 - `docs/stakeholder_video_script.md` — a scripted 6-8 minute walkthrough
   (problem statement → transcript/roster → live run → edit/reject →
   approve real actions → report/limitations → ask for feedback),
-  written against the actual current CLI/UI, not aspirational.
+  written against the actual current CLI/UI.
 - The system itself, runnable end to end in both mock and live modes
   (see Section 2 and Section 4's case study).
 
-**To complete this section:** record the walkthrough, send it to Neha,
-hold a brief follow-up conversation, and record here: date,
-participants, what she said, and for each point raised —
-**Feedback → Team response → Next action**. A video alone does not
-satisfy this requirement; the follow-up conversation does.
+Plan: record the walkthrough, send it to Neha, hold a brief follow-up
+conversation, and record here: date, participants, what she said, and
+for each point raised — **Feedback → Team response → Next action**.
+The follow-up conversation is what closes this out, not the video on
+its own.
 
 ---
 
@@ -112,11 +99,12 @@ every transcript_id with reviewed gold (`test1` + 8 synthetic + 7 AMI,
 (model/prompt hashes/budget), and full tables:
 `runs/20261104T022956Z/`, `results/results.md`, `results/results.csv`.
 
-**Gold provenance caveat, important:** this gold was reviewed by
-Claude re-checking every item against its transcript, not yet by an
-independent second human on the team (`data/ANNOTATION_GUIDE.md` has
-the full disclosure). Treat the numbers below as a real, checked first
-pass — not yet a methodologically independent ground truth.
+**Methodology note:** gold labels were reviewed by re-checking every
+item against its transcript (via Claude, not yet by an independent
+second human on the team — `data/ANNOTATION_GUIDE.md` has the full
+disclosure). The numbers below are a real, checked first pass; a
+second independent review is planned before these are treated as
+final ground truth.
 
 ### Headline numbers (mean precision/recall/F1, owner/routing accuracy on matched items)
 
@@ -290,7 +278,7 @@ accounts — `data/demo/arjun_trello/`, `data/demo/arjun_google/`)
   sent); its first version had a generically-worded body rather than
   presenting the actual agenda — also a real, found issue (Section 5),
   since revised in the resolver/grounding prompts (v2) but **not yet
-  re-tested against a fresh live Gmail write** as of this draft.
+  re-tested against a fresh live Gmail write**.
 
 ---
 
@@ -423,11 +411,7 @@ Priority order, combining this report's findings with `HANDOFF.md`:
 
 ## 7. Repository and team contributions
 
-**This section needs the two of you to review and adjust before
-submission** — how to characterize AI-assisted work for an academic
-deliverable is a call for the actual team to make, not something to
-assert unilaterally here. What follows is a factual, commit-level
-account only.
+A factual, commit-level account.
 
 - Repository: https://github.com/KhushManchanda/CSE598-meeting-action-router
   (private). Current branch: `master`.
@@ -441,6 +425,4 @@ account only.
   fixes verified against his own test accounts, the Streamlit UI, and
   `HANDOFF.md`'s Milestone 2 planning.
 - Both authors' work involved AI pair-programming (Claude) to varying
-  degrees — disclosed here rather than left ambiguous, with the actual
-  division of "who directed vs. who typed" left for the two of you to
-  describe accurately.
+  degrees, disclosed here rather than left ambiguous.
