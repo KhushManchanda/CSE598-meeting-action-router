@@ -9,21 +9,25 @@ transcripts with reviewed gold × 5 systems, `gpt-4o-mini`, $0.21 total).
 
 ## 1. Stakeholder follow-up and deliverables
 
-Status: scheduled, not yet held. The walkthrough and the follow-up
-conversation with Neha Kashyap come next, using the materials below.
+**Date:** 2026-11-07. **Participants:** Neha Kashyap (stakeholder),
+Arjun Ranjan. **Format:** a recorded walkthrough of the system
+(following `docs/stakeholder_video_script.md`'s structure — problem
+statement, transcript/roster setup, a live run, edit/reject, approving
+real Calendar/Trello/Gmail actions, the report, and known limitations),
+shared with Neha for async review, with her responses captured
+question-by-question.
 
-- `docs/stakeholder_video_script.md` — a scripted 6-8 minute walkthrough
-  (problem statement → transcript/roster → live run → edit/reject →
-  approve real actions → report/limitations → ask for feedback),
-  written against the actual current CLI/UI.
-- The system itself, runnable end to end in both mock and live modes
-  (see Section 2 and Section 4's case study).
+| Feedback | Team response | Next action |
+|---|---|---|
+| "Does this help with the meeting notes → task board problem you originally described?" — **Yes!** | Confirms the core problem framing from Milestone 1 still holds and the system as demoed addresses it. | None — validated, no scope change. |
+| "Does the review screen make sense? Anything confusing or missing?" — **All the screenshots of the different screens make sense to me.** | The approve/edit/reject review UI (source evidence alongside each proposed action, per `ui/runtime.py` / `streamlit_app.py`) reads clearly to someone outside the team. | None — validated. |
+| "What would you want us to improve or add before the final version?" — **Is there a way to easily view all approved cards?** | A real, specific gap: the UI's action ledger (`action_results()` in `streamlit_app.py`) lists every action as an individual expander in extraction order, labeled by state, but has no filter to show only verified/approved items at a glance, and no cross-run aggregate view. | **Added to Section 6 as a near-term priority:** a filtered "approved/verified" view in the Streamlit UI (and/or the JSON report), so Neha can see what actually went out without expanding every item one at a time. |
+| "Are you good with the final scope being text meeting notes → reviewed Calendar events, assigned Trello tasks, and Gmail drafts, with a report showing what worked and what needs follow-up?" — **Yes, that scope is good with me.** | Confirms the scope frozen at Milestone 1 (Calendar, Trello, Gmail drafts, plus a report) is still the right final scope — no expansion or reduction requested. | None — scope confirmed as-is for the remaining milestone work. |
+| "Are finding the right commitments, getting the owner/date/tool right, requiring approval, and flagging failures still the main things you'd judge it on? ... Based on the meeting content, what was said and assigned, the AI correctly assigning correct and detailed tasks to the correct member is my criteria." | Confirms the evaluation criteria in Section 3 (owner accuracy, routing accuracy, precision/recall, correct escalation of ambiguous items) match what the stakeholder actually cares about — owner correctness specifically is named as the top criterion, which aligns directly with Finding 1/Finding 2 in Section 3. | Keep owner accuracy as the headline metric in future reporting to Neha, not buried alongside precision/recall; prioritize Section 6 item 1 (the resolver's speaker-vs-owner gap on real speech) accordingly, since it's the one place current performance falls short of her stated criterion. |
 
-Plan: record the walkthrough, send it to Neha, hold a brief follow-up
-conversation, and record here: date, participants, what she said, and
-for each point raised — **Feedback → Team response → Next action**.
-The follow-up conversation is what closes this out, not the video on
-its own.
+**Outcome:** scope and evaluation criteria are confirmed unchanged from
+Milestone 1. One concrete feature request came out of this —
+Section 6 below has been updated to include it.
 
 ---
 
@@ -373,10 +377,12 @@ hypothetical risks:
 
 ## 6. Remaining work
 
-Priority order, combining this report's findings with `HANDOFF.md`:
+Priority order, combining this report's findings with `HANDOFF.md` and
+the 2026-11-07 stakeholder feedback (Section 1):
 
 1. **Fix the resolver's speaker-vs-owner gap on real speech**
-   (Section 5, item 1 — the biggest, newest finding). Extend
+   (Section 5, item 1 — the biggest, newest finding, and directly tied
+   to Neha's stated top evaluation criterion in Section 1). Extend
    `prompts/resolver_v2.md` with explicit guidance/examples for
    collective-decision phrasing ("we're going to...") and
    mid-utterance addressee switches ("you will have to..."), then
@@ -384,14 +390,16 @@ Priority order, combining this report's findings with `HANDOFF.md`:
    item recall actually improves before touching anything else
    evaluation-related — this is squarely a dev-split iteration task,
    never touch the test-split transcripts while tuning it.
-2. **Independent human gold review** (Arjun and/or Khush, using
+2. **Add a filtered "approved/verified" view** (Section 1 — Neha's one
+   explicit feature request). The action ledger currently lists every
+   item as an individual expander in extraction order; add a filter
+   (in `streamlit_app.py`'s `action_results()`, and/or the JSON report)
+   so a reviewer can see only what actually went out without expanding
+   every item.
+3. **Independent human gold review** (Arjun and/or Khush, using
    `scripts/review_gold.py`) over the 51 AI-reviewed items — at
    minimum a pilot re-check of the judgment calls flagged in
    `data/ami/ATTRIBUTION.md` and the synthetic `NOTES.md` files.
-3. **Record the stakeholder walkthrough and hold the follow-up
-   conversation** (Section 1) — script is ready
-   (`docs/stakeholder_video_script.md`); this just needs a human to
-   actually do it.
 4. **Fresh end-to-end live re-verification** of the Gmail content fix
    and the Calendar parsing fix (Section 5, item 7) against a live
    write, not just mock-tools re-tests.

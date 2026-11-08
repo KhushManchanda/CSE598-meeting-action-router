@@ -7,12 +7,12 @@ baseline (B0) and a single-call LLM baseline (B1).
 
 For the current checkpoint, verification limits, stakeholder video plan,
 and prioritized Milestone 2 work, start with [HANDOFF.md](HANDOFF.md).
-For the actual draft Milestone 2 report (architecture, evaluation,
-case study, failure analysis, remaining work), see
-[MILESTONE2_REPORT.md](MILESTONE2_REPORT.md) — it is explicitly marked
-as a draft, not a finished submission. Architecture diagram:
-[docs/architecture.md](docs/architecture.md). Stakeholder video script
-(not yet recorded): [docs/stakeholder_video_script.md](docs/stakeholder_video_script.md).
+For the Milestone 2 report (architecture, evaluation, case study,
+failure analysis, stakeholder feedback, remaining work), see
+[MILESTONE2_REPORT.md](MILESTONE2_REPORT.md). Architecture diagram:
+[docs/architecture.md](docs/architecture.md). Stakeholder walkthrough
+script used for the 2026-11-07 session with Neha Kashyap:
+[docs/stakeholder_video_script.md](docs/stakeholder_video_script.md).
 
 ## Current local verification — November 3, 2026
 
