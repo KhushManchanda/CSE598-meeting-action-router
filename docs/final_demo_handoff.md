@@ -2,11 +2,11 @@
 
 Poster upload is due November 23 at 2:00 PM Arizona time. Submit one portrait
 24 × 36-inch PDF as `Group30_Poster.pdf`. The in-person poster session is
-December 2. Both team members attend. The teammate handoff ZIP contains
-`Group30_Poster_ASU.pdf`, `Group30_Poster_Editorial.pdf`, and editable source.
-Rename the selected copy to `Group30_Poster.pdf` for submission. Use this file
-to track the remaining implementation behind the product workflow shown on
-either poster.
+December 2. Both team members attend. The [poster handoff](poster/README.md)
+contains rebuild instructions for `Group30_Poster_ASU.pdf` and
+`Group30_Poster_Editorial.pdf`, plus the original review materials.
+Rename the selected copy to `Group30_Poster.pdf` for submission. Use this
+file to track the remaining implementation shown in the poster workflow.
 
 ## Milestone 2 evidence
 
