@@ -7,8 +7,9 @@ review, a per-run action ledger, mock evaluation, and live CLI smoke tests for
 Trello, Google Calendar, and Gmail drafts. For the final demo we plan to
 complete live UI acceptance and add a single view of approved Trello cards.
 See the [final demo handoff](docs/final_demo_handoff.md) for proposed owners,
-acceptance criteria, and the walkthrough. The printed poster describes this
-target workflow alongside the measured Milestone 2 results.
+acceptance criteria, and the walkthrough. The posters present the product
+workflow and the measured Milestone 2 results. Use the handoff to track
+which parts of the workflow still need implementation or live verification.
 
 An LLM agent that turns speaker-labeled meeting transcripts into real,
 verified follow-up actions in Google Calendar and Trello (Gmail drafts as
