@@ -1,5 +1,15 @@
 # Meeting Action-Item Router
 
+## December 2 final demo
+
+The Milestone 2 checkpoint includes transcript extraction, evidence-backed
+review, a per-run action ledger, mock evaluation, and live CLI smoke tests for
+Trello, Google Calendar, and Gmail drafts. For the final demo we plan to
+complete live UI acceptance and add a single view of approved Trello cards.
+See the [final demo handoff](docs/final_demo_handoff.md) for proposed owners,
+acceptance criteria, and the walkthrough. The printed poster describes this
+target workflow alongside the measured Milestone 2 results.
+
 An LLM agent that turns speaker-labeled meeting transcripts into real,
 verified follow-up actions in Google Calendar and Trello (Gmail drafts as
 a stretch goal) — built next to, and benchmarked against, a rule-based
